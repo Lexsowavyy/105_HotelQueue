@@ -1,0 +1,493 @@
+@model HotelQueue.Controllers.DashboardIndexViewModel
+
+@{
+    ViewData["Title"] = "Dashboard - Hotel Queue Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    function handleDateFilterChange(select) {
+        var customRange = document.getElementById('customDateRange');
+        if (select.value === 'custom') {
+            customRange.style.display = 'flex';
+        } else if (select.value !== '') {
+            select.form.submit();
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var dateFilter = document.querySelector('select[name="dateFilter"]');
+        var customRange = document.getElementById('customDateRange');
+        
+        if (dateFilter && customRange) {
+            if (dateFilter.value === 'custom' || '@ViewBag.StartDate' !== '') {
+                customRange.style.display = 'flex';
+            }
+        }
+    });
+</script>
+
+<div class="container-fluid px-3 px-lg-4">
+    <div class="dashboard-header text-center mb-4 mb-md-5">
+        <div class="header-content">
+            <h1 class="gold-shimmer">Grand Azure Hotel</h1>
+            <p class="text-gold">Intelligent Queue Management System</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-3 align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-gold fw-bold"><i class="fas fa-calendar-alt me-1"></i>Date Filter:</span>
+                    <form method="get" class="d-flex gap-2 align-items-center" id="dateFilterForm">
+                        <select name="dateFilter" class="form-select form-select-sm" style="width: 150px;" onchange="handleDateFilterChange(this)">
+                            @{
+                                var dateFilter = ViewBag.DateFilter as string;
+                                var hasCustom = ViewBag.StartDate != null;
+                            }
+                            <option value="">All Time</option>
+                            <option value="today" selected="@(dateFilter == "today")">Today</option>
+                            <option value="week" selected="@(dateFilter == "week")">This Week</option>
+                            <option value="month" selected="@(dateFilter == "month")">This Month</option>
+                            <option value="year" selected="@(dateFilter == "year")">This Year</option>
+                            <option value="custom" selected="@hasCustom">Custom Range</option>
+                        </select>
+                        <div class="input-group input-group-sm" id="customDateRange" style="display: none;">
+                            <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate" />
+                            <span class="input-group-text">to</span>
+                            <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate" />
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                @if (ViewBag.DateFilter != null || ViewBag.StartDate != null)
+                {
+                    <a href="@Url.Action("Index", "Dashboard")" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Clear
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 g-xl-5 mb-4 mb-md-5">
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card h-100">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <p class="stat-label">Total Bookings</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number">@Model.TotalReservations</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card h-100">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-bed"></i></div>
+                    <p class="stat-label">Available</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-success">@Model.AvailableRooms</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card h-100">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-crown"></i></div>
+                    <p class="stat-label">VIP Members</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-gold">@Model.VIPReservations</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card h-100">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-peso-sign"></i></div>
+                    <p class="stat-label">Revenue</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-gold">@Model.Revenue.ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4 mb-md-5">
+        <div class="col-md-6 col-lg-3">
+            <div class="quick-action-card h-100">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon"><i class="fas fa-calendar-plus"></i></div>
+                    <p class="quick-action-label">New Reservation</p>
+                </div>
+                <div class="quick-action-right">
+                    <a asp-controller="Reservation" asp-action="Create" class="btn btn-primary btn-sm">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="quick-action-card h-100">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon"><i class="fas fa-search"></i></div>
+                    <p class="quick-action-label">Reservations</p>
+                </div>
+                <div class="quick-action-right">
+                    <a asp-controller="Reservation" asp-action="Index" class="btn btn-outline-primary btn-sm">View</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="quick-action-card h-100">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon"><i class="fas fa-clock"></i></div>
+                    <p class="quick-action-label">Waitlist</p>
+                </div>
+                <div class="quick-action-right">
+                    <a asp-controller="Waitlist" asp-action="Index" class="btn btn-warning btn-sm text-dark">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="quick-action-card h-100">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon"><i class="fas fa-chart-bar"></i></div>
+                    <p class="quick-action-label">Baseline Comparison</p>
+                </div>
+                <div class="quick-action-right">
+                    <a asp-controller="Baseline" asp-action="Index" class="btn btn-info btn-sm text-dark">Compare</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Reservations by Status</h5>
+                </div>
+                <div class="card-body">
+                    <div id="statusChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Customer Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div id="customerChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-door-open me-2"></i>Room Occupancy by Type</h5>
+                </div>
+                <div class="card-body">
+                    <div id="roomChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-list-ol me-2"></i>Waitlist Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div id="queueChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+        <div class="col-12 col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Bookings</h5>
+                    <a asp-controller="Reservation" asp-action="Index" class="btn btn-link text-gold btn-sm">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Guest</th>
+                                    <th>Room</th>
+                                    <th>Check-In</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var res in Model.RecentReservations.Take(5))
+                                {
+                                    <tr>
+                                        <td><code>@res.ReservationId</code></td>
+                                        <td>@res.Customer?.Name</td>
+                                        <td>@res.Room?.RoomNumber</td>
+                                        <td>@res.CheckInDate.ToString("MMM dd")</td>
+                                        <td>
+                                            <span class="badge @GetStatusBadgeClass(res.Status)">@res.Status</span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.RecentReservations.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-5">
+                                            <i class="fas fa-calendar-times fa-3x mb-3 opacity-25"></i>
+                                            <p class="mb-0">No bookings yet</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Notifications</h5>
+                    <span class="badge bg-danger">@Model.UnreadNotifications New</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="notification-list">
+                        @foreach (var notif in Model.RecentNotifications)
+                        {
+                            <div class="notification-item @(notif.IsRead ? "" : "unread")">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="notification-icon">
+                                        <i class="@GetNotificationIcon(notif.Type)"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 small">@notif.Message</p>
+                                        <small class="text-muted">@notif.CreatedAt.ToString("g")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (!Model.RecentNotifications.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="fas fa-bell-slash fa-2x mb-2 text-muted"></i>
+                                <p class="text-muted mb-0">No notifications</p>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer bg-dark text-center border-secondary">
+                        <a asp-controller="Notification" asp-action="Index" class="btn btn-link text-gold btn-sm">View All</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var statusOptions = {
+        series: [@Model.PendingReservations, @Model.ConfirmedReservations, @Model.CancelledReservations, @Model.CompletedReservations],
+        chart: { type: 'donut', height: 280, toolbar: { show: false } },
+        labels: ['Pending', 'Confirmed', 'Cancelled', 'Completed'],
+        colors: ['#ffc107', '#28a745', '#dc3545', '#17a2b8'],
+        legend: { position: 'bottom', labels: { colors: '#fff' } },
+        dataLabels: { enabled: true, style: { colors: ['#fff'] } },
+        plotOptions: { pie: { donut: { size: '65%' } } },
+        stroke: { show: false }
+    };
+    new ApexCharts(document.querySelector("#statusChart"), statusOptions).render();
+
+    var customerOptions = {
+        series: [@Model.VIPReservations, @Model.RegularReservations],
+        chart: { type: 'pie', height: 280, toolbar: { show: false } },
+        labels: ['VIP Customers', 'Regular Customers'],
+        colors: ['#d4a853', '#6c757d'],
+        legend: { position: 'bottom', labels: { colors: '#fff' } },
+        dataLabels: { enabled: true, style: { colors: ['#fff'] } },
+        stroke: { show: false }
+    };
+    new ApexCharts(document.querySelector("#customerChart"), customerOptions).render();
+
+    var roomOptions = {
+        series: [{ name: 'Occupied Rooms', data: [@Html.Raw(string.Join(",", Model.RoomOccupancyByType.Values))] }],
+        chart: { type: 'bar', height: 280, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '50%', endingShape: 'rounded' } },
+        colors: ['#d4a853'],
+        xaxis: { categories: [@Html.Raw(string.Join(",", Model.RoomOccupancyByType.Keys.Select(k => $"'{k}'")))], labels: { style: { colors: '#fff' } } },
+        yaxis: { labels: { style: { colors: '#fff' }, formatter: function(val) { return Math.round(val); } } },
+        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+        fill: { opacity: 1 },
+        dataLabels: { enabled: true, style: { colors: ['#fff'] } }
+    };
+    new ApexCharts(document.querySelector("#roomChart"), roomOptions).render();
+
+    var queueOptions = {
+        series: [{ 
+            name: 'Count', 
+            data: [
+                { x: 'VIP Waitlist', y: @Model.VIPQueueCount, fillColor: '#d4a853' },
+                { x: 'Regular Waitlist', y: @Model.RegularQueueCount, fillColor: '#6c757d' },
+                { x: 'Total Waitlist', y: @Model.WaitlistCount, fillColor: '#ffc107' }
+            ]
+        }],
+        chart: { type: 'bar', height: 280, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: true, barHeight: '60%', endingShape: 'rounded' } },
+        colors: ['#d4a853', '#6c757d', '#ffc107'],
+        xaxis: { categories: ['VIP Waitlist', 'Regular Waitlist', 'Total Waitlist'], labels: { style: { colors: '#fff' } } },
+        yaxis: { labels: { style: { colors: '#fff' } } },
+        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+        fill: { opacity: 1 },
+        dataLabels: { enabled: true, style: { colors: ['#000'] } },
+        tooltip: {
+            theme: 'dark',
+            custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                var categories = ['VIP Waitlist', 'Regular Waitlist', 'Total Waitlist'];
+                var descriptions = [
+                    'VIP customers waiting for rooms (Priority Queue)',
+                    'Regular customers waiting for rooms (Standard Queue)',
+                    'All customers waiting when rooms are unavailable'
+                ];
+                var priority = ['<span style="color:#d4a853;">★ VIP customers are served first</span>', '', ''];
+                var count = series[seriesIndex];
+                return '<div class="apexcharts-tooltip-title" style="background:#1a1a2e;color:#d4a853;padding:8px;border-radius:4px;font-weight:bold;">' + categories[dataPointIndex] + '</div>' +
+                       '<div class="apexcharts-tooltip-text" style="background:#1a1a2e;color:#fff;padding:8px;">' +
+                       '<strong>Count:</strong> ' + count + ' customers<br>' +
+                       '<span style="color:#aaa;font-size:11px;">' + descriptions[dataPointIndex] + '</span><br>' +
+                       priority[dataPointIndex] +
+                       '</div>';
+            }
+        }
+    };
+    
+    var queueChart = new ApexCharts(document.querySelector("#queueChart"), queueOptions);
+    queueChart.render();
+    
+    document.querySelector("#queueChart").addEventListener('click', function(e) {
+        window.location.href = '/Waitlist';
+    });
+</script>
+
+<style>
+    .dashboard-container { padding: 0; }
+    .dashboard-header { padding: 20px 0; text-align: center; }
+    .dashboard-header h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 10px; }
+    .quick-action-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border: 1px solid rgba(212, 168, 83, 0.3);
+        border-radius: 12px; padding: 15px;
+        display: flex; align-items: center; gap: 15px; transition: all 0.3s;
+    }
+    .quick-action-card:hover { border-color: #d4a853; transform: translateY(-2px); }
+    .quick-action-icon {
+        width: 40px; height: 40px; min-width: 40px; background: rgba(212, 168, 83, 0.2);
+        border-radius: 10px; display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; color: #d4a853;
+    }
+    .quick-action-content h5 { color: #fff; margin-bottom: 0; font-size: 0.95rem; }
+    .quick-action-content p { color: rgba(255,255,255,0.6); margin-bottom: 8px; font-size: 0.8rem; }
+    .notification-list { max-height: 300px; overflow-y: auto; }
+    .notification-item { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s; }
+    .notification-item:hover { background: rgba(212, 168, 83, 0.1); }
+    .notification-item.unread { background: rgba(212, 168, 83, 0.15); border-left: 3px solid #d4a853; }
+    .notification-icon {
+        width: 32px; height: 32px; background: rgba(212, 168, 83, 0.2);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4a853;
+    }
+    .stat-card .stat-icon { font-size: 1.5rem; }
+    .stat-card .stat-number { font-size: 1.5rem; }
+    .stat-card .stat-label { font-size: 0.75rem; }
+    
+    .input-group-text {
+        background-color: var(--secondary-black);
+        border-color: rgba(212, 168, 83, 0.3);
+        color: var(--text-light);
+    }
+    
+    .card input[type="date"] {
+        background-color: var(--secondary-black);
+        color: var(--white);
+        border-color: rgba(212, 168, 83, 0.3);
+    }
+    .card input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(100%);
+        cursor: pointer;
+    }
+    .card input[type="date"]::-webkit-inner-spin-button,
+    .card input[type="date"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    @@media (min-width: 768px) {
+        .dashboard-header h1 { font-size: 2.5rem; }
+        .quick-action-card { padding: 20px; }
+        .quick-action-icon { width: 50px; height: 50px; min-width: 50px; font-size: 1.5rem; }
+        .quick-action-content h5 { font-size: 1rem; }
+        .stat-card .stat-icon { font-size: 2rem; }
+        .stat-card .stat-number { font-size: 2rem; }
+        .stat-card .stat-label { font-size: 0.85rem; }
+    }
+</style>
+
+@functions {
+    string GetStatusBadgeClass(HotelQueue.Models.ReservationStatus status)
+    {
+        return status switch
+        {
+            HotelQueue.Models.ReservationStatus.Pending => "bg-warning text-dark",
+            HotelQueue.Models.ReservationStatus.Confirmed => "bg-success",
+            HotelQueue.Models.ReservationStatus.Cancelled => "bg-danger",
+            HotelQueue.Models.ReservationStatus.Expired => "bg-secondary",
+            HotelQueue.Models.ReservationStatus.Completed => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetNotificationIcon(HotelQueue.Models.NotificationType type)
+    {
+        return type switch
+        {
+            HotelQueue.Models.NotificationType.Confirmation => "fas fa-check",
+            HotelQueue.Models.NotificationType.Cancellation => "fas fa-times",
+            HotelQueue.Models.NotificationType.WaitlistPromotion => "fas fa-arrow-up",
+            HotelQueue.Models.NotificationType.Reminder => "fas fa-bell",
+            HotelQueue.Models.NotificationType.Expiration => "fas fa-clock",
+            HotelQueue.Models.NotificationType.Archive => "fas fa-archive",
+            _ => "fas fa-info"
+        };
+    }
+}

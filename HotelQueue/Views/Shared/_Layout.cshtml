@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Grand Azure Hotel</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="icon" href="~/favicon.ico" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0d0d1a;
+            color: #fff;
+        }
+        .hotel-navbar {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 2px solid #d4a853;
+        }
+        .hotel-navbar .navbar-brand {
+            font-family: 'Playfair Display', serif;
+        }
+        .brand-text {
+            color: #d4a853;
+            font-weight: 600;
+        }
+        .text-gold {
+            color: #d4a853 !important;
+        }
+        .gold-shimmer {
+            background: linear-gradient(135deg, #d4a853, #f0d78c, #d4a853);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid rgba(212, 168, 83, 0.3);
+            border-radius: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 168, 83, 0.2);
+        }
+        .card {
+            background: #1a1a2e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+        .card-header {
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.2) 0%, rgba(184, 145, 47, 0.1) 100%);
+            border-bottom: 1px solid rgba(212, 168, 83, 0.3);
+            color: #d4a853;
+        }
+        .table {
+            color: #fff;
+        }
+        .table thead th {
+            border-bottom: 2px solid #d4a853;
+            color: #d4a853;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4a853 0%, #b8912f 100%);
+            border: none;
+            color: #000;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f0d78c 0%, #d4a853 100%);
+            color: #000;
+        }
+        .main-content {
+            background: #0d0d1a;
+            min-height: calc(100vh - 70px);
+            padding: 30px 0;
+        }
+        .dashboard-header {
+            padding: 30px 0;
+        }
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+        }
+        .footer {
+            background: #0d0d1a;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #d4a853;
+        }
+        .dropdown-menu {
+            background: #1a1a2e;
+            border: 1px solid rgba(212, 168, 83, 0.3);
+        }
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .dropdown-item:hover {
+            background: rgba(212, 168, 83, 0.2);
+            color: #d4a853;
+        }
+        .form-control, .form-select {
+            background: #0d0d1a;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .form-control:focus, .form-select:focus {
+            background: #0d0d1a;
+            border-color: #d4a853;
+            color: #fff;
+        }
+        .badge.bg-warning {
+            background: #d4a853 !important;
+            color: #000 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark hotel-navbar sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-hotel me-3 fa-lg"></i>
+                <span class="brand-text">Grand Azure Hotel</span>
+            </a>
+            <button class="navbar-toggler border-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index">
+                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Room" ? "active" : "")" asp-controller="Room" asp-action="Index">
+                            <i class="fas fa-bed me-1"></i> Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reservation" ? "active" : "")" asp-controller="Reservation" asp-action="Index">
+                            <i class="fas fa-calendar-alt me-1"></i> Reservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Waitlist" ? "active" : "")" asp-controller="Waitlist" asp-action="Index">
+                            <i class="fas fa-clock me-1"></i> Waitlist
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notification" ? "active" : "")" asp-controller="Notification" asp-action="Index">
+                            <i class="fas fa-bell me-1"></i> Notifications
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="text-center">
+                <p class="text-muted small mb-0">&copy; 2026 Grand Azure Hotel. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

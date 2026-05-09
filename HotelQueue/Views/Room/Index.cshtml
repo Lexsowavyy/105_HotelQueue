@@ -1,0 +1,178 @@
+@model HotelQueue.ViewModels.RoomViewModel
+
+@{
+    ViewData["Title"] = "Our Luxurious Rooms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="container-fluid px-4">
+    <div class="dashboard-header text-center mb-5">
+        <div class="header-content">
+            <h1 class="gold-shimmer">Our Accommodations</h1>
+            <p class="text-gold">Experience Unparalleled Luxury & Comfort</p>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-5">
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-building"></i></div>
+                    <p class="stat-label">Total Rooms</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number">@Model.AllRooms.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <p class="stat-label">Available</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-success">@Model.AvailableRooms.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-bed"></i></div>
+                    <p class="stat-label">Occupied</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-warning">@Model.OccupiedRooms.Count</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var room in Model.AllRooms)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="room-card">
+                    <div class="room-image" style="background-image: @GetRoomImage(room.Type, room.RoomNumber)">
+                        <div class="room-image-overlay">
+                            <span class="badge @GetRoomBadge(room.Type)">@room.Type</span>
+                        </div>
+                        @if (!room.IsAvailable)
+                        {
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.6);">
+                                <span class="badge bg-danger fs-6">Occupied</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="room-header">
+                        <span class="room-number">Room @room.RoomNumber</span>
+                    </div>
+                    <div class="room-body">
+                        <div class="room-price">₱@GetPriceInPHP(room.PricePerNight).ToString("N0") <small class="text-muted fs-6">/ night</small></div>
+                        <div class="room-details">
+                            <span><i class="fas fa-user-friends me-1"></i>@room.Capacity guests</span>
+                            <span class="@(room.IsAvailable ? "text-success" : "text-danger")">
+                                <i class="fas @(room.IsAvailable ? "fa-check" : "fa-times") me-1"></i>
+                                @(room.IsAvailable ? "Available" : "Booked")
+                            </span>
+                        </div>
+                        <hr class="border-secondary my-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-controller="Reservation" asp-action="Create" asp-route-roomId="@room.RoomId" class="btn btn-primary btn-sm">
+                                <i class="fas fa-calendar-plus me-1"></i>Book Now
+                            </a>
+                            <a asp-controller="Room" asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!Model.AllRooms.Any())
+        {
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-bed fa-4x mb-3 text-muted"></i>
+                <h4 class="text-muted">No rooms available</h4>
+            </div>
+        }
+    </div>
+
+    <div class="hero-image mt-5">
+        <div class="text-center">
+            <h2 class="display-5 text-white mb-3">VIP Priority Queue</h2>
+            <p class="text-white-50 mb-4">Become a VIP member for priority booking and exclusive benefits</p>
+            <a asp-controller="Reservation" asp-action="Create" class="btn btn-primary btn-lg">
+                <i class="fas fa-crown me-2"></i>Book as VIP Member
+            </a>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetRoomImage(HotelQueue.Models.RoomType type, string roomNumber)
+    {
+        string path;
+        if (type == HotelQueue.Models.RoomType.Standard)
+        {
+            path = roomNumber switch
+            {
+                "101" => "/images/standard-room.jpg",
+                "102" => "/images/prado_luxury_hotel_room_standard_family_inner_view.jpg",
+                "103" => "/images/RH-12.jpg",
+                "104" => "/images/Amorgos-Standard-Room1-e1464286427430.jpg",
+                "105" => "/images/images.jpg",
+                _ => "/images/standard-room.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Deluxe)
+        {
+            path = roomNumber switch
+            {
+                "201" => "/images/Deluxe/deluxe-room-sea-view.jpg",
+                "202" => "/images/Deluxe/istockphoto-1056769738-612x612.jpg",
+                "203" => "/images/Deluxe/Mountain-View-Deluxe-King2-788x650.jpg",
+                "204" => "/images/Deluxe/Superior-DeLuxe-Room_TB.jpg",
+                "205" => "/images/Deluxe/the-phoenician-scottsdale-grand-deluxe-room-01-1200x630.jpg",
+                _ => "/images/Deluxe/deluxe-room-sea-view.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Suite)
+        {
+            path = roomNumber switch
+            {
+                "301" => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+                "302" => "/images/Suites/caption.jpg",
+                "303" => "/images/Suites/premium-deluxe-renaissance.jpg",
+                "304" => "/images/Suites/presidential-da-vinci.jpg",
+                "305" => "/images/Suites/Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+                _ => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg"
+            };
+        }
+        else
+        {
+            return "url('/images/standard-room.jpg')";
+        }
+        return $"url('{path}')";
+    }
+
+    string GetRoomBadge(HotelQueue.Models.RoomType type)
+    {
+        return type switch
+        {
+            HotelQueue.Models.RoomType.Standard => "bg-secondary",
+            HotelQueue.Models.RoomType.Deluxe => "bg-info",
+            HotelQueue.Models.RoomType.Suite => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+
+    decimal GetPriceInPHP(decimal priceInUSD)
+    {
+        decimal exchangeRate = 56.00m;
+        return priceInUSD * exchangeRate;
+    }
+}

@@ -1,0 +1,192 @@
+@model HotelQueue.Models.Room
+
+@{
+    ViewData["Title"] = "Room Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="room-image" style="height: 400px; background-image: @GetRoomImage(Model.Type, Model.RoomNumber); background-size: cover; background-position: center;">
+                    <div class="h-100 d-flex align-items-end">
+                        <div class="w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.9));">
+                            <h2 class="text-white mb-0">Room @Model.RoomNumber</h2>
+                            <span class="badge @GetRoomBadge(Model.Type) mt-2">@Model.Type</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="stat-card mb-0">
+                                <div class="stat-content">
+                                    <p class="stat-label">Price Per Night</p>
+                                    <h3 class="stat-number text-gold">₱@GetPriceInPHP(Model.PricePerNight).ToString("N0")</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card mb-0">
+                                <div class="stat-content">
+                                    <p class="stat-label">Guest Capacity</p>
+                                    <h3 class="stat-number">@Model.Capacity <small class="fs-6">guests</small></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary my-4">
+
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-wifi fa-2x text-gold mb-2"></i>
+                            <p class="mb-0">Free WiFi</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-snowflake fa-2x text-gold mb-2"></i>
+                            <p class="mb-0">Air Conditioning</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-tv fa-2x text-gold mb-2"></i>
+                            <p class="mb-0">Smart TV</p>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary my-4">
+
+                    <h5 class="text-gold mb-3">Revenue Estimate</h5>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <p class="text-muted small mb-1">Nightly</p>
+                            <h4 class="text-gold">₱@GetPriceInPHP(Model.PricePerNight).ToString("N0")</h4>
+                        </div>
+                        <div class="col-4">
+                            <p class="text-muted small mb-1">Weekly</p>
+                            <h4 class="text-gold">₱@GetPriceInPHP(Model.PricePerNight * 7).ToString("N0")</h4>
+                        </div>
+                        <div class="col-4">
+                            <p class="text-muted small mb-1">Monthly</p>
+                            <h4 class="text-gold">₱@GetPriceInPHP(Model.PricePerNight * 30).ToString("N0")</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 100px;">
+                <div class="card-header">
+                    <h5 class="mb-0 text-center"><i class="fas fa-door-open me-2 text-gold"></i>Room Information</h5>
+                </div>
+                <div class="card-body text-center">
+                    @if (Model.IsAvailable)
+                    {
+                        <div class="badge bg-success fs-6 mb-4"><i class="fas fa-check-circle me-1"></i>Available</div>
+                    }
+                    else
+                    {
+                        <div class="badge bg-danger fs-6 mb-4"><i class="fas fa-times-circle me-1"></i>Occupied</div>
+                    }
+
+                    <hr class="border-secondary">
+
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">Room Type</p>
+                        <h5>@Model.Type</h5>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">Room Number</p>
+                        <h5>@Model.RoomNumber</h5>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">Room ID</p>
+                        <code>@Model.RoomId</code>
+                    </div>
+
+                    <hr class="border-secondary">
+
+                    @if (Model.IsAvailable)
+                    {
+                        <a asp-controller="Reservation" asp-action="Create" class="btn btn-primary w-100 mb-3">
+                            <i class="fas fa-calendar-plus me-2"></i>Book This Room
+                        </a>
+                    }
+                    <a asp-controller="Room" asp-action="Index" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Rooms
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetRoomImage(HotelQueue.Models.RoomType type, string roomNumber)
+    {
+        string path;
+        if (type == HotelQueue.Models.RoomType.Standard)
+        {
+            path = roomNumber switch
+            {
+                "101" => "/images/standard-room.jpg",
+                "102" => "/images/prado_luxury_hotel_room_standard_family_inner_view.jpg",
+                "103" => "/images/RH-12.jpg",
+                "104" => "/images/Amorgos-Standard-Room1-e1464286427430.jpg",
+                "105" => "/images/images.jpg",
+                _ => "/images/standard-room.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Deluxe)
+        {
+            path = roomNumber switch
+            {
+                "201" => "/images/Deluxe/deluxe-room-sea-view.jpg",
+                "202" => "/images/Deluxe/istockphoto-1056769738-612x612.jpg",
+                "203" => "/images/Deluxe/Mountain-View-Deluxe-King2-788x650.jpg",
+                "204" => "/images/Deluxe/Superior-DeLuxe-Room_TB.jpg",
+                "205" => "/images/Deluxe/the-phoenician-scottsdale-grand-deluxe-room-01-1200x630.jpg",
+                _ => "/images/Deluxe/deluxe-room-sea-view.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Suite)
+        {
+            path = roomNumber switch
+            {
+                "301" => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+                "302" => "/images/Suites/caption.jpg",
+                "303" => "/images/Suites/premium-deluxe-renaissance.jpg",
+                "304" => "/images/Suites/presidential-da-vinci.jpg",
+                "305" => "/images/Suites/Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+                _ => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg"
+            };
+        }
+        else
+        {
+            return "url('/images/standard-room.jpg')";
+        }
+        return $"url('{path}')";
+    }
+
+    string GetRoomBadge(HotelQueue.Models.RoomType type)
+    {
+        return type switch
+        {
+            HotelQueue.Models.RoomType.Standard => "bg-secondary",
+            HotelQueue.Models.RoomType.Deluxe => "bg-info",
+            HotelQueue.Models.RoomType.Suite => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+
+    decimal GetPriceInPHP(decimal priceInUSD)
+    {
+        decimal exchangeRate = 56.00m;
+        return priceInUSD * exchangeRate;
+    }
+}

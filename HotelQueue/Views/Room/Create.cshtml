@@ -1,0 +1,99 @@
+@model HotelQueue.ViewModels.CreateRoomViewModel
+
+@{
+    ViewData["Title"] = "Add Room";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-plus-circle text-primary me-2"></i>Add New Room
+        </h2>
+        <a asp-controller="Room" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <form asp-controller="Room" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-door-open me-2"></i>Room Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RoomNumber" class="form-label">Room Number</label>
+                                <input asp-for="RoomNumber" class="form-control" required placeholder="e.g., 101, 2A, Suite-1" />
+                                <span asp-validation-for="RoomNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Type" class="form-label">Room Type</label>
+                                <select asp-for="Type" class="form-select">
+                                    <option value="@RoomType.Standard">Standard</option>
+                                    <option value="@RoomType.Deluxe">Deluxe</option>
+                                    <option value="@RoomType.Suite">Suite</option>
+                                </select>
+                                <span asp-validation-for="Type" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PricePerNight" class="form-label">Price Per Night ($)</label>
+                                <input asp-for="PricePerNight" type="number" step="0.01" min="0" class="form-control" required />
+                                <span asp-validation-for="PricePerNight" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Capacity" class="form-label">Guest Capacity</label>
+                                <input asp-for="Capacity" type="number" min="1" max="10" class="form-control" required />
+                                <span asp-validation-for="Capacity" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Add Room
+                        </button>
+                        <a asp-controller="Room" asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-info text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Room Types</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="fas fa-bed me-2 text-secondary"></i>Standard</h6>
+                        <p class="small text-muted">Basic amenities, ideal for solo travelers or couples. Recommended price: $100/night</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-bed me-2 text-info"></i>Deluxe</h6>
+                        <p class="small text-muted">Enhanced comfort with better amenities. Recommended price: $200/night</p>
+                    </div>
+                    <div>
+                        <h6><i class="fas fa-bed me-2 text-warning"></i>Suite</h6>
+                        <p class="small text-muted">Premium accommodations with luxury features. Recommended price: $350/night</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,66 @@
+@model IEnumerable<HotelQueue.ViewModels.RoomTypeStatistics>
+
+@{
+    ViewData["Title"] = "Room Statistics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="container">
+    <div class="dashboard-header text-center mb-5">
+        <div class="header-content">
+            <h1 class="gold-shimmer">Room Statistics</h1>
+            <p class="text-gold">Occupancy & Revenue Overview</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var stat in Model)
+        {
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h5 class="mb-0 text-gold">@stat.TypeName Rooms</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <h3 class="text-success">@stat.AvailableRooms</h3>
+                                <p class="text-muted small mb-0">Available</p>
+                            </div>
+                            <div class="col-6">
+                                <h3 class="text-danger">@stat.OccupiedRooms</h3>
+                                <p class="text-muted small mb-0">Occupied</p>
+                            </div>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="text-center">
+                            <p class="mb-1"><strong>Occupancy Rate</strong></p>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" style="width: @stat.OccupancyRate%;">@stat.OccupancyRate.ToString("F1")%</div>
+                            </div>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="text-center">
+                            <p class="mb-1"><strong>Average Price</strong></p>
+                            <h4 class="text-gold">₱@stat.AveragePrice.ToString("N0")</h4>
+                            <p class="text-muted small">per night</p>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="text-center">
+                            <p class="mb-1"><strong>Total @stat.TypeName Rooms</strong></p>
+                            <h3>@stat.TotalRooms</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Room" asp-action="Index" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Rooms
+        </a>
+    </div>
+</div>

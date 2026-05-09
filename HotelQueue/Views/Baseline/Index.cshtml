@@ -1,0 +1,444 @@
+@model HotelQueue.Controllers.BaselineComparisonViewModel
+
+@{
+    ViewData["Title"] = "Baseline vs Optimized Comparison";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<div class="container-fluid px-3 px-lg-4">
+    <div class="dashboard-header text-center mb-4 mb-md-5">
+        <div class="header-content">
+            <h1 class="gold-shimmer">Baseline vs Optimized Comparison</h1>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-list-ol me-2 text-gold"></i>How to Use This Page (Step-by-Step)
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card h-100">
+                        <div class="step-number">1</div>
+                        <h6>Select Data Size</h6>
+                        <p class="small text-muted mb-0">Choose how many reservation records to test. The system uses the same dataset for both Baseline and Optimized.</p>
+                        <p class="small text-gold mt-2 mb-0"><strong>Input:</strong> @Model.DataSize reservation records</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card h-100">
+                        <div class="step-number">2</div>
+                        <h6>Run Sort Test</h6>
+                        <p class="small text-muted mb-0">Click "Run Sort Test" to compare Bubble Sort O(n²) vs Quick Sort O(n log n) on the same data.</p>
+                        <p class="small text-gold mt-2 mb-0"><strong>Output:</strong> Execution time, comparisons, swaps</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card h-100">
+                        <div class="step-number">3</div>
+                        <h6>Run Search Test</h6>
+                        <p class="small text-muted mb-0">Click "Run Search Test" to compare Linear Search O(n) vs HashTable + Binary Search O(1)/O(log n).</p>
+                        <p class="small text-gold mt-2 mb-0"><strong>Output:</strong> Search speed comparison</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card h-100">
+                        <div class="step-number">4</div>
+                        <h6>Interpret Results</h6>
+                        <p class="small text-muted mb-0">View bar charts, improvement percentages, and the full Before vs After comparison table aligned with your deliverables.</p>
+                        <p class="small text-gold mt-2 mb-0"><strong>Output:</strong> % improvement per operation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                <div>
+                    <span class="text-gold fw-bold"><i class="fas fa-database me-1"></i>Total Reservations in System:</span>
+                    <span class="text-light ms-2">@Model.TotalReservations</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-gold fw-bold"><i class="fas fa-sliders-h me-1"></i>Test Data Size:</span>
+                    <form method="get" class="d-flex gap-2">
+                        <select name="dataSize" class="form-select form-select-sm" style="width: 120px;" onchange="this.form.submit()">
+                            <option value="10" selected="@(Model.DataSize == 10)">10 records</option>
+                            <option value="50" selected="@(Model.DataSize == 50)">50 records</option>
+                            <option value="100" selected="@(Model.DataSize == 100)">100 records</option>
+                            <option value="500" selected="@(Model.DataSize == 500)">500 records</option>
+                            <option value="1000" selected="@(Model.DataSize == 1000)">1000 records</option>
+                        </select>
+                    </form>
+                    <button class="btn btn-sm btn-danger" onclick="runSortTest(@Model.DataSize)">
+                        <i class="fas fa-sort me-1"></i>Run Sort Test
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="runSearchTest(@Model.DataSize)">
+                        <i class="fas fa-search me-1"></i>Run Search Test
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Before vs After</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 22%;">Operation</th>
+                                    <th style="width: 39%;" class="text-danger">Baseline Approach</th>
+                                    <th style="width: 39%;" class="text-success">Optimized Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Queue System</strong></td>
+                                    <td><span class="text-danger">@Model.BaselineQueueType</span></td>
+                                    <td><span class="text-success">@Model.OptimizedQueueType</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Search</strong></td>
+                                    <td><span class="text-danger">@Model.BaselineSearchComplexity</span></td>
+                                    <td><span class="text-success">@Model.OptimizedSearchComplexity</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sort</strong></td>
+                                    <td><span class="text-danger">@Model.BaselineSortComplexity</span></td>
+                                    <td><span class="text-success">@Model.OptimizedSortComplexity</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Room Allocation</strong></td>
+                                    <td><span class="text-danger">@Model.BaselineAllocationType</span></td>
+                                    <td><span class="text-success">@Model.OptimizedAllocationType</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Reservation Lookup</strong></td>
+                                    <td><span class="text-danger">@Model.BaselineLookupType</span></td>
+                                    <td><span class="text-success">@Model.OptimizedLookupType</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Waitlist</strong></td>
+                                    <td><span class="text-danger">@Model.BaselineWaitlistType</span></td>
+                                    <td><span class="text-success">@Model.OptimizedWaitlistType</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cancellation</strong></td>
+                                    <td><span class="text-danger">@Model.BaselineCancellationType</span></td>
+                                    <td><span class="text-success">@Model.OptimizedCancellationType</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Sort Performance — Bubble Sort vs Quick Sort</h5>
+                </div>
+                <div class="card-body">
+                    <div id="sortChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search Performance — Linear vs HashTable/Binary</h5>
+                </div>
+                <div class="card-body">
+                    <div id="searchChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-table me-2"></i>Complexity Comparison Summary</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Operation</th>
+                                    <th class="text-danger">Baseline Complexity</th>
+                                    <th class="text-success">Optimized Complexity</th>
+                                    <th>Improvement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Search / Lookup</strong></td>
+                                    <td><span class="text-danger">O(n)</span></td>
+                                    <td><span class="text-success">O(1) avg / O(log n)</span></td>
+                                    <td><span class="badge bg-success">Reduced</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Insert (VIP)</strong></td>
+                                    <td><span class="text-danger">O(1) append</span></td>
+                                    <td><span class="text-success">O(log n) heap</span></td>
+                                    <td><span class="badge bg-info">Structured</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Insert (Regular)</strong></td>
+                                    <td><span class="text-danger">O(1) append</span></td>
+                                    <td><span class="text-success">O(1) FIFO</span></td>
+                                    <td><span class="badge bg-secondary">Same</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Delete / Update</strong></td>
+                                    <td><span class="text-danger">O(n) linear scan</span></td>
+                                    <td><span class="text-success">O(1) + O(log n) heap</span></td>
+                                    <td><span class="badge bg-success">Faster</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Room Allocation</strong></td>
+                                    <td><span class="text-danger">O(n²) manual</span></td>
+                                    <td><span class="text-success">O(n) greedy</span></td>
+                                    <td><span class="badge bg-success">Automated</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sorting</strong></td>
+                                    <td><span class="text-danger">O(n²)</span></td>
+                                    <td><span class="text-success">O(n log n)</span></td>
+                                    <td><span class="badge bg-success">Efficient</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Waitlist Mgmt</strong></td>
+                                    <td><span class="text-danger">O(n) manual</span></td>
+                                    <td><span class="text-success">O(log n) heap / O(1) FIFO</span></td>
+                                    <td><span class="badge bg-success">Automated</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Empirical Evaluation Results — @Model.DataSize Records</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Baseline</th>
+                            <th>Optimized</th>
+                            <th>Improvement</th>
+                            <th>Baseline Complexity</th>
+                            <th>Optimized Complexity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sort Execution Time</strong></td>
+                            <td><span class="text-danger">@Model.BaselineSortTimeMs.ToString("N3") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedSortTimeMs.ToString("N3") ms</span></td>
+                            <td><span class="badge bg-success">@Model.SortImprovementPercent.ToString("N2")%</span></td>
+                            <td>O(n²)</td>
+                            <td>O(n log n)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sort Comparisons</strong></td>
+                            <td><span class="text-danger">@Model.BaselineSortComparisons.ToString("N0")</span></td>
+                            <td><span class="text-success">@Model.OptimizedSortComparisons.ToString("N0")</span></td>
+                            <td><span class="badge bg-success">@((Model.BaselineSortComparisons > 0 ? (Model.BaselineSortComparisons - Model.OptimizedSortComparisons) * 100 / Model.BaselineSortComparisons : 0).ToString("N0"))%</span></td>
+                            <td rowspan="3">O(n²)</td>
+                            <td rowspan="3">O(n log n)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sort Swaps</strong></td>
+                            <td><span class="text-danger">@Model.BaselineSortSwaps.ToString("N0")</span></td>
+                            <td><span class="text-success">@Model.OptimizedSortSwaps.ToString("N0")</span></td>
+                            <td><span class="badge bg-success">@((Model.BaselineSortSwaps > 0 ? (Model.BaselineSortSwaps - Model.OptimizedSortSwaps) * 100 / Model.BaselineSortSwaps : 0).ToString("N0"))%</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Search Time (100 lookups)</strong></td>
+                            <td><span class="text-danger">@Model.BaselineSearchTimeMs.ToString("N3") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedSearchTimeMs.ToString("N3") ms</span></td>
+                            <td><span class="badge bg-success">@Model.SearchImprovementPercent.ToString("N2")%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card h-100">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-clock text-danger"></i></div>
+                    <p class="stat-label">Baseline Sort Time</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-danger">@Model.BaselineSortTimeMs.ToString("N2")</h3>
+                    <small class="text-muted">ms (Bubble Sort)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card h-100">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-clock text-success"></i></div>
+                    <p class="stat-label">Optimized Sort Time</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-success">@Model.OptimizedSortTimeMs.ToString("N2")</h3>
+                    <small class="text-muted">ms (Quick Sort)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card h-100">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-chart-line text-gold"></i></div>
+                    <p class="stat-label">Sort Improvement</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number text-gold">@Model.SortImprovementPercent.ToString("N2")%</h3>
+                    <small class="text-muted">faster than baseline</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var sortOptions = {
+        series: [
+            {
+                name: 'Baseline (Bubble Sort O(n\u00B2))',
+                data: [@Model.BaselineSortTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
+            },
+            {
+                name: 'Optimized (Quick Sort O(n log n))',
+                data: [@Model.OptimizedSortTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
+            }
+        ],
+        chart: { type: 'bar', height: 300, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '40%', endingShape: 'rounded' } },
+        colors: ['#dc3545', '#28a745'],
+        xaxis: { categories: ['Sort @Model.DataSize Records'], labels: { style: { colors: '#fff' } } },
+        yaxis: { title: { text: 'Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
+        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+        dataLabels: { enabled: true, formatter: function(v) { return v.toFixed(2) + ' ms'; }, style: { colors: ['#fff'] } },
+        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(3) + ' ms'; } } }
+    };
+    new ApexCharts(document.querySelector("#sortChart"), sortOptions).render();
+
+    var searchOptions = {
+        series: [
+            {
+                name: 'Baseline (Linear Search O(n))',
+                data: [@Model.BaselineSearchTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
+            },
+            {
+                name: 'Optimized (HashTable O(1) + Binary O(log n))',
+                data: [@Model.OptimizedSearchTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
+            }
+        ],
+        chart: { type: 'bar', height: 300, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '40%', endingShape: 'rounded' } },
+        colors: ['#dc3545', '#17a2b8'],
+        xaxis: { categories: ['100 Lookups on @Model.DataSize Records'], labels: { style: { colors: '#fff' } } },
+        yaxis: { title: { text: 'Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
+        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+        dataLabels: { enabled: true, formatter: function(v) { return v.toFixed(3) + ' ms'; }, style: { colors: ['#fff'] } },
+        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(4) + ' ms'; } } }
+    };
+    new ApexCharts(document.querySelector("#searchChart"), searchOptions).render();
+
+    function runSortTest(dataSize) {
+        var btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sorting...';
+
+        fetch('/Baseline/RunSortTest?dataSize=' + dataSize)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                alert('Sort Test (' + d.dataSize + ' records):\n' +
+                      'Baseline (Bubble Sort):  ' + d.baselineMs + ' ms\n' +
+                      'Optimized (Quick Sort): ' + d.optimizedMs + ' ms\n' +
+                      'Improvement:            ' + d.improvementPercent + '%');
+                location.reload();
+            })
+            .catch(function() { alert('Test failed. Ensure there are enough reservation records.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sort me-1"></i>Run Sort Test'; });
+    }
+
+    function runSearchTest(dataSize) {
+        var btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Searching...';
+
+        fetch('/Baseline/RunSearchTest?dataSize=' + dataSize)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                alert('Search Test (' + d.dataSize + ' records, 100 lookups):\n' +
+                      'Baseline (Linear):  ' + d.baselineMs + ' ms\n' +
+                      'Optimized (Hash):   ' + d.optimizedMs + ' ms\n' +
+                      'Improvement:        ' + d.improvementPercent + '%');
+                location.reload();
+            })
+            .catch(function() { alert('Test failed. Ensure there are enough reservation records.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-search me-1"></i>Run Search Test'; });
+    }
+</script>
+
+<style>
+    .stat-card .stat-icon { font-size: 1.5rem; }
+    .stat-card .stat-number { font-size: 1.5rem; }
+    .stat-card .stat-label { font-size: 0.75rem; }
+    table th.text-danger { color: #dc3545; }
+    table th.text-success { color: #28a745; }
+    .step-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border: 1px solid rgba(212, 168, 83, 0.2);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .step-card:hover { border-color: #d4a853; transform: translateY(-2px); }
+    .step-number {
+        width: 40px; height: 40px;
+        background: linear-gradient(135deg, #d4a853, #b8922e);
+        color: #000; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 1.1rem;
+        margin: 0 auto 0.75rem;
+    }
+    .step-card h6 { color: #d4a853; margin-bottom: 0.5rem; }
+    @@media (min-width: 768px) {
+        .stat-card .stat-icon { font-size: 2rem; }
+        .stat-card .stat-number { font-size: 2rem; }
+        .stat-card .stat-label { font-size: 0.85rem; }
+    }
+</style>

@@ -1,0 +1,351 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\services\\reservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\services\\reservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\datastructures\\quicksorter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\datastructures\\quicksorter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\databasesetup.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\databasesetup.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\datastructures\\priorityqueue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\datastructures\\priorityqueue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\datastructures\\greedyallocator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\datastructures\\greedyallocator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\datastructures\\fifoqueue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\datastructures\\fifoqueue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\datastructures\\binarysearcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\datastructures\\binarysearcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\services\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\services\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\viewmodels\\notificationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\viewmodels\\notificationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\wwwroot\\images\\suites\\royal-suite-gioconda-bedroom-renaissance-style-819x546.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\wwwroot\\images\\suites\\royal-suite-gioconda-bedroom-renaissance-style-819x546.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\wwwroot\\images\\suites\\presidential-da-vinci.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\wwwroot\\images\\suites\\presidential-da-vinci.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\wwwroot\\images\\suites\\premium-deluxe-renaissance.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\wwwroot\\images\\suites\\premium-deluxe-renaissance.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\wwwroot\\images\\suites\\5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\wwwroot\\images\\suites\\5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\wwwroot\\images\\deluxe\\superior-deluxe-room_tb.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\wwwroot\\images\\deluxe\\superior-deluxe-room_tb.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|c:\\users\\alexandra marie\\source\\repos\\hotelqueue\\hotelqueue\\views\\room\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D3DF9AA0-F3B4-4A03-B3F9-359C985885AA}|HotelQueue\\HotelQueue.csproj|solutionrelative:hotelqueue\\views\\room\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 11,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "HotelQueue\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T07:20:56.954Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\Controllers\\AccountController.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "HotelQueue\\Controllers\\AccountController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T10:20:24.79Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "HotelQueue\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\appsettings.Development.json",
+              "RelativeToolTip": "HotelQueue\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T10:05:15.571Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "HotelQueue\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Properties\\launchSettings.json",
+              "RelativeToolTip": "HotelQueue\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-14T13:41:34.364Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Program.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\Program.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Program.cs",
+              "RelativeToolTip": "HotelQueue\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T13:41:19.887Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DatabaseSetup.sql",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DatabaseSetup.sql",
+              "RelativeDocumentMoniker": "HotelQueue\\DatabaseSetup.sql",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DatabaseSetup.sql",
+              "RelativeToolTip": "HotelQueue\\DatabaseSetup.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-04-14T13:41:15.588Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "PriorityQueue.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\PriorityQueue.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\DataStructures\\PriorityQueue.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\PriorityQueue.cs",
+              "RelativeToolTip": "HotelQueue\\DataStructures\\PriorityQueue.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T10:05:49.471Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "QuickSorter.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\QuickSorter.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\DataStructures\\QuickSorter.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\QuickSorter.cs",
+              "RelativeToolTip": "HotelQueue\\DataStructures\\QuickSorter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T01:15:55.292Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "GreedyAllocator.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\GreedyAllocator.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\DataStructures\\GreedyAllocator.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\GreedyAllocator.cs",
+              "RelativeToolTip": "HotelQueue\\DataStructures\\GreedyAllocator.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T01:15:40.846Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "FIFOQueue.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\FIFOQueue.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\DataStructures\\FIFOQueue.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\FIFOQueue.cs",
+              "RelativeToolTip": "HotelQueue\\DataStructures\\FIFOQueue.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T01:15:38.52Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "BinarySearcher.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\BinarySearcher.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\DataStructures\\BinarySearcher.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\DataStructures\\BinarySearcher.cs",
+              "RelativeToolTip": "HotelQueue\\DataStructures\\BinarySearcher.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T01:15:32.045Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ReservationService.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Services\\ReservationService.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\Services\\ReservationService.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Services\\ReservationService.cs*",
+              "RelativeToolTip": "HotelQueue\\Services\\ReservationService.cs*",
+              "ViewState": "AgIAACMAAAAAAAAAAAAQwAkAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T01:15:13.977Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "DashboardService.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Services\\DashboardService.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\Services\\DashboardService.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Services\\DashboardService.cs",
+              "RelativeToolTip": "HotelQueue\\Services\\DashboardService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T01:15:12.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "NotificationViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\ViewModels\\NotificationViewModel.cs",
+              "RelativeDocumentMoniker": "HotelQueue\\ViewModels\\NotificationViewModel.cs",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\ViewModels\\NotificationViewModel.cs",
+              "RelativeToolTip": "HotelQueue\\ViewModels\\NotificationViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T01:14:50.274Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+              "RelativeDocumentMoniker": "HotelQueue\\wwwroot\\images\\Suites\\Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+              "RelativeToolTip": "HotelQueue\\wwwroot\\images\\Suites\\Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-04-13T05:56:52.046Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "presidential-da-vinci.jpg",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\presidential-da-vinci.jpg",
+              "RelativeDocumentMoniker": "HotelQueue\\wwwroot\\images\\Suites\\presidential-da-vinci.jpg",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\presidential-da-vinci.jpg",
+              "RelativeToolTip": "HotelQueue\\wwwroot\\images\\Suites\\presidential-da-vinci.jpg",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-04-13T05:56:49.831Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "premium-deluxe-renaissance.jpg",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\premium-deluxe-renaissance.jpg",
+              "RelativeDocumentMoniker": "HotelQueue\\wwwroot\\images\\Suites\\premium-deluxe-renaissance.jpg",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\premium-deluxe-renaissance.jpg",
+              "RelativeToolTip": "HotelQueue\\wwwroot\\images\\Suites\\premium-deluxe-renaissance.jpg",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-04-13T05:56:47.752Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+              "RelativeDocumentMoniker": "HotelQueue\\wwwroot\\images\\Suites\\5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Suites\\5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+              "RelativeToolTip": "HotelQueue\\wwwroot\\images\\Suites\\5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-04-13T05:54:16.101Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Superior-DeLuxe-Room_TB.jpg",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Deluxe\\Superior-DeLuxe-Room_TB.jpg",
+              "RelativeDocumentMoniker": "HotelQueue\\wwwroot\\images\\Deluxe\\Superior-DeLuxe-Room_TB.jpg",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\wwwroot\\images\\Deluxe\\Superior-DeLuxe-Room_TB.jpg",
+              "RelativeToolTip": "HotelQueue\\wwwroot\\images\\Deluxe\\Superior-DeLuxe-Room_TB.jpg",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-04-13T05:41:58.26Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\appsettings.json",
+              "RelativeDocumentMoniker": "HotelQueue\\appsettings.json",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\appsettings.json",
+              "RelativeToolTip": "HotelQueue\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAC7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-13T05:04:36.298Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Views\\Room\\Create.cshtml",
+              "RelativeDocumentMoniker": "HotelQueue\\Views\\Room\\Create.cshtml",
+              "ToolTip": "C:\\Users\\alexandra marie\\source\\repos\\HotelQueue\\HotelQueue\\Views\\Room\\Create.cshtml",
+              "RelativeToolTip": "HotelQueue\\Views\\Room\\Create.cshtml",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-13T04:04:31.544Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+@model HotelQueue.Services.DashboardStatistics
+
+@{
+    ViewData["Title"] = "Dashboard - Hotel Queue Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="dashboard-header text-center mb-5">
+        <div class="header-content">
+            <h1 class="gold-shimmer">Hotel Queue Dashboard</h1>
+            <p class="text-gold">Real-time system overview and management</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x text-gold mb-3"></i>
+                    <h2 class="mb-1">@Model.TotalReservations</h2>
+                    <p class="text-muted mb-0">Total Reservations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-bed fa-2x text-gold mb-3"></i>
+                    <h2 class="mb-1">@Model.TotalRooms</h2>
+                    <p class="text-muted mb-0">Total Rooms</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x text-gold mb-3"></i>
+                    <h2 class="mb-1">@Model.WaitlistCount</h2>
+                    <p class="text-muted mb-0">Waitlist Entries</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-peso-sign fa-2x text-gold mb-3"></i>
+                    <h2 class="mb-1">₱@Model.Revenue.ToString("N0")</h2>
+                    <p class="text-muted mb-0">Total Revenue</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Reservations by Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-hourglass-half text-warning me-2"></i>Pending</span>
+                        <span class="badge bg-warning">@Model.PendingReservations</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-check-circle text-success me-2"></i>Confirmed</span>
+                        <span class="badge bg-success">@Model.ConfirmedReservations</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-times-circle text-danger me-2"></i>Cancelled</span>
+                        <span class="badge bg-danger">@Model.CancelledReservations</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-flag-checkered text-info me-2"></i>Completed</span>
+                        <span class="badge bg-info">@Model.CompletedReservations</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Customer Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-crown text-warning me-2"></i>VIP Customers</span>
+                        <span class="badge bg-warning">@Model.VIPReservations</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-user text-secondary me-2"></i>Regular Customers</span>
+                        <span class="badge bg-secondary">@Model.RegularReservations</span>
+                    </div>
+                    <hr class="border-secondary">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-list text-primary me-2"></i>VIP Queue</span>
+                        <span class="badge bg-primary">@Model.TotalVIPInQueue</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-list text-secondary me-2"></i>Regular Queue</span>
+                        <span class="badge bg-secondary">@Model.TotalRegularInQueue</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-door-open me-2"></i>Room Occupancy</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="text-success">@Model.AvailableRooms</h3>
+                            <p class="text-muted mb-0">Available</p>
+                        </div>
+                        <div class="col-6">
+                            <h3 class="text-danger">@Model.OccupiedRooms</h3>
+                            <p class="text-muted mb-0">Occupied</p>
+                        </div>
+                    </div>
+                    <hr class="border-secondary">
+                    <p class="mb-0"><strong>Occupancy Rate:</strong> <span class="text-gold">@Model.OccupancyRate.ToString("F1")%</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Notifications</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h3 class="text-warning">@Model.UnreadNotifications</h3>
+                    <p class="text-muted">Unread Notifications</p>
+                    <a asp-controller="Notification" asp-action="Index" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye me-1"></i>View All
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-crown me-2"></i>VIP Statistics</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h3 class="text-warning">@Model.VIPPercentage.ToString("F1")%</h3>
+                    <p class="text-muted">VIP Reservations</p>
+                    <a asp-controller="Reservation" asp-action="VIPQueue" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-list me-1"></i>VIP Queue
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-link me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a asp-controller="Room" asp-action="Index" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-bed me-2"></i>Manage Rooms
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Reservation" asp-action="Index" class="btn btn-outline-success w-100">
+                                <i class="fas fa-calendar-alt me-2"></i>All Reservations
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Reservation" asp-action="Create" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-plus me-2"></i>New Reservation
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="Waitlist" asp-action="Index" class="btn btn-outline-info w-100">
+                                <i class="fas fa-clock me-2"></i>Manage Waitlist
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

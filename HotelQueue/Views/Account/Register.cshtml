@@ -1,0 +1,113 @@
+@model HotelQueue.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #d4a853 0%, #b8912f 100%);">
+                    <h3 class="mb-0 text-white"><i class="fas fa-user-plus me-2"></i>Create Account</h3>
+                </div>
+                <div class="card-body p-5">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Register" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="FirstName" class="form-label text-gold">First Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary">
+                                        <i class="fas fa-user text-gold"></i>
+                                    </span>
+                                    <input asp-for="FirstName" class="form-control bg-dark border-secondary text-white" placeholder="First name" />
+                                </div>
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="LastName" class="form-label text-gold">Last Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary">
+                                        <i class="fas fa-user text-gold"></i>
+                                    </span>
+                                    <input asp-for="LastName" class="form-control bg-dark border-secondary text-white" placeholder="Last name" />
+                                </div>
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Email" class="form-label text-gold">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary">
+                                    <i class="fas fa-envelope text-gold"></i>
+                                </span>
+                                <input asp-for="Email" class="form-control bg-dark border-secondary text-white" placeholder="Enter your email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Phone" class="form-label text-gold">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary">
+                                    <i class="fas fa-phone text-gold"></i>
+                                </span>
+                                <input asp-for="Phone" class="form-control bg-dark border-secondary text-white" placeholder="Enter your phone number" />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label text-gold">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary">
+                                    <i class="fas fa-lock text-gold"></i>
+                                </span>
+                                <input asp-for="Password" class="form-control bg-dark border-secondary text-white" placeholder="Create a password (min 6 characters)" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmPassword" class="form-label text-gold">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary">
+                                    <i class="fas fa-lock text-gold"></i>
+                                </span>
+                                <input asp-for="ConfirmPassword" class="form-control bg-dark border-secondary text-white" placeholder="Confirm your password" />
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="text-muted mb-0">Already have an account?</p>
+                        <a asp-action="Login" class="text-gold">Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

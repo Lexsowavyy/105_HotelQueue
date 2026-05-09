@@ -1,0 +1,140 @@
+@model HotelQueue.Models.WaitlistEntry
+
+@{
+    ViewData["Title"] = "Waitlist Entry Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-clock text-warning me-2"></i>Waitlist Entry Details
+        </h2>
+        <a asp-controller="Waitlist" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark py-3">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Customer Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Name:</strong></p>
+                            <p class="text-muted">@Model.Customer?.Name</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Email:</strong></p>
+                            <p class="text-muted">@Model.Customer?.Email</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Phone:</strong></p>
+                            <p class="text-muted">@Model.Customer?.Phone</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Type:</strong></p>
+                            @if (Model.CustomerType == CustomerType.VIP)
+                            {
+                                <span class="badge bg-danger"><i class="fas fa-crown me-1"></i>VIP</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Regular</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-bed me-2"></i>Room Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Room Number:</strong></p>
+                            <p class="text-muted">@Model.Room?.RoomNumber</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Room Type:</strong></p>
+                            <span class="badge @GetRoomBadge(Model.PreferredRoomType)">@Model.PreferredRoomType</span>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Preferred Check-In:</strong></p>
+                            <p class="text-muted">@Model.PreferredCheckIn.ToString("MMM dd, yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Added:</strong></p>
+                            <p class="text-muted">@Model.AddedAt.ToString("MMM dd, yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Priority:</strong></p>
+                            <p class="text-muted">@(Model.Priority == 1 ? "High (VIP)" : "Normal (Regular)")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Promoted:</strong></p>
+                            <p class="text-muted">@(Model.IsPromoted ? "Yes" : "No")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark py-3">
+                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Waitlist" asp-action="Edit" asp-route-id="@Model.WaitlistId" class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i>Edit Entry
+                        </a>
+                        <form asp-controller="Waitlist" asp-action="Archive" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.WaitlistId" />
+                            <button type="submit" class="btn btn-secondary w-100" onclick="return confirm('Archive this waitlist entry?')">
+                                <i class="fas fa-archive me-1"></i>Archive Entry
+                            </button>
+                        </form>
+                        <form asp-controller="Waitlist" asp-action="Remove" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.WaitlistId" />
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Remove from waitlist?')">
+                                <i class="fas fa-times me-1"></i>Remove Entry
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetRoomBadge(HotelQueue.Models.RoomType type)
+    {
+        return type switch
+        {
+            HotelQueue.Models.RoomType.Standard => "bg-secondary",
+            HotelQueue.Models.RoomType.Deluxe => "bg-info",
+            HotelQueue.Models.RoomType.Suite => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+}

@@ -1,0 +1,156 @@
+@model HotelQueue.ViewModels.ReservationViewModel
+
+@{
+    ViewData["Title"] = "My Bookings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="container-fluid px-4">
+    <div class="dashboard-header text-center mb-5">
+        <div class="header-content">
+            <h1 class="gold-shimmer">My Bookings</h1>
+            <p class="text-gold">Welcome back, @User.Identity?.Name!</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x text-gold mb-2"></i>
+                    <h3 class="mb-1">@Model.AllReservations.Count</h3>
+                    <p class="mb-0 text-muted">Total Bookings</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                    <h3 class="mb-1">@Model.AllReservations.Count(r => r.Status == ReservationStatus.Pending)</h3>
+                    <p class="mb-0 text-muted">Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <h3 class="mb-1">@Model.AllReservations.Count(r => r.Status == ReservationStatus.Confirmed)</h3>
+                    <p class="mb-0 text-muted">Confirmed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <h5 class="mb-0"><i class="fas fa-list me-2 text-gold"></i>Your Reservations</h5>
+            <a asp-controller="Room" asp-action="Index" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus me-1"></i>Book New Room
+            </a>
+        </div>
+        <div class="card-body p-0">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Room</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var res in Model.AllReservations)
+                        {
+                            <tr>
+                                <td><code>@res.ReservationId</code></td>
+                                <td>
+                                    <strong>@res.Room?.RoomNumber</strong>
+                                    <br><small class="text-muted">@res.Room?.Type</small>
+                                </td>
+                                <td>@res.CheckInDate.ToString("MMM dd, yyyy")</td>
+                                <td>@res.CheckOutDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(res.Status)">@res.Status</span>
+                                </td>
+                                <td class="text-gold fw-bold">₱@GetPriceInPHP(res.TotalPrice).ToString("N2")</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-controller="Reservation" asp-action="Details" asp-route-id="@res.ReservationId" 
+                                           class="btn btn-outline-primary" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (res.Status == ReservationStatus.Pending || res.Status == ReservationStatus.Confirmed)
+                                        {
+                                            <form asp-controller="Reservation" asp-action="Cancel" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@res.ReservationId" />
+                                                <button type="submit" class="btn btn-outline-danger" title="Cancel"
+                                                        onclick="return confirm('Are you sure you want to cancel this reservation?');">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.AllReservations.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <i class="fas fa-calendar-plus fa-4x mb-3 text-muted opacity-25"></i>
+                                    <h5 class="text-muted">No bookings yet</h5>
+                                    <p class="text-muted">Browse our rooms and make your first reservation!</p>
+                                    <a asp-controller="Room" asp-action="Index" class="btn btn-primary mt-2">Browse Rooms</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(HotelQueue.Models.ReservationStatus status)
+    {
+        return status switch
+        {
+            HotelQueue.Models.ReservationStatus.Pending => "bg-warning text-dark",
+            HotelQueue.Models.ReservationStatus.Confirmed => "bg-success",
+            HotelQueue.Models.ReservationStatus.Cancelled => "bg-danger",
+            HotelQueue.Models.ReservationStatus.Expired => "bg-secondary",
+            HotelQueue.Models.ReservationStatus.Completed => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+
+    decimal GetPriceInPHP(decimal priceInUSD)
+    {
+        decimal exchangeRate = 56.00m;
+        return priceInUSD * exchangeRate;
+    }
+}

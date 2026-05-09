@@ -1,0 +1,1022 @@
+/* ========================================
+   Grand Azure Hotel - Luxury Black & Gold Theme
+   ======================================== */
+
+:root {
+    --primary-black: #0a0a0a;
+    --secondary-black: #1a1a1a;
+    --dark-gray: #2d2d2d;
+    --gold: #d4a853;
+    --gold-light: #e8c36a;
+    --gold-dark: #b8912f;
+    --white: #ffffff;
+    --off-white: #f5f5f5;
+    --cream: #faf8f5;
+    --text-light: #cccccc;
+    --text-muted: #888888;
+    --gradient-gold: linear-gradient(135deg, #d4a853 0%, #f0c674 50%, #d4a853 100%);
+    --gradient-dark: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --shadow-gold: 0 4px 20px rgba(212, 168, 83, 0.3);
+    --border-radius: 12px;
+    --border-radius-lg: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Playfair Display', Georgia, serif;
+    background-color: var(--primary-black);
+    color: var(--white);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ========================================
+   Navigation Bar - Luxury Dark Theme
+   ======================================== */
+
+.hotel-navbar {
+    background: var(--gradient-dark) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+}
+
+.hotel-navbar::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-gold);
+}
+
+.hotel-navbar .navbar-brand {
+    font-weight: 700;
+    font-size: 1.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.hotel-navbar .brand-text {
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(212, 168, 83, 0.3);
+}
+
+.hotel-navbar .nav-link {
+    color: var(--white) !important;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.75rem 1.25rem !important;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.hotel-navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: var(--gold);
+    transition: width 0.3s ease;
+}
+
+.hotel-navbar .nav-link:hover::after,
+.hotel-navbar .nav-link.active::after {
+    width: 80%;
+}
+
+.hotel-navbar .nav-link:hover {
+    color: var(--gold) !important;
+}
+
+.hotel-navbar .nav-link.active {
+    color: var(--gold) !important;
+}
+
+.hotel-navbar .dropdown-menu {
+    background: var(--secondary-black);
+    border: 1px solid rgba(212, 168, 83, 0.3);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.hotel-navbar .dropdown-item {
+    color: var(--white);
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.hotel-navbar .dropdown-item:hover {
+    background: var(--dark-gray);
+    color: var(--gold);
+}
+
+/* ========================================
+   Main Content Area
+   ======================================== */
+
+.main-content {
+    flex: 1;
+    padding-bottom: 3rem;
+}
+
+/* ========================================
+   Dashboard Header - Hero Section
+   ======================================== */
+
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dashboard-header {
+    background: var(--gradient-dark);
+    padding: 5rem 2rem;
+    margin-bottom: 3rem;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80') center/cover no-repeat;
+    opacity: 0.5;
+    filter: brightness(1.1);
+}
+
+.dashboard-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0.95) 100%);
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-header h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 1s ease;
+}
+
+.dashboard-header p {
+    font-size: 1.25rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    animation: fadeInUp 1s ease 0.2s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   Stat Cards - Luxury Style
+   ======================================== */
+
+.stat-card {
+    background: var(--secondary-black);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.4s ease;
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-gold);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+}
+
+.stat-card:hover::before {
+    transform: scaleX(1);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-gold);
+    border-color: rgba(212, 168, 83, 0.3);
+}
+
+.stat-card-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: var(--gold);
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+    text-align: center;
+}
+
+.stat-card-right {
+    text-align: right;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.stat-breakdown .badge {
+    margin-right: 0.5rem;
+    padding: 0.4em 0.8em;
+    font-size: 0.75rem;
+}
+
+/* ========================================
+   Quick Action Cards
+   ======================================== */
+
+.quick-action-card {
+    background: var(--secondary-black);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: all 0.4s ease;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-gold);
+    border-color: var(--gold);
+}
+
+.quick-action-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quick-action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gradient-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--primary-black);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-gold);
+}
+
+.quick-action-label {
+    color: var(--white);
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.quick-action-right {
+    flex-shrink: 0;
+}
+
+/* ========================================
+   Cards - Luxury Style
+   ======================================== */
+
+.card {
+    background: var(--secondary-black);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.card-header {
+    background: var(--dark-gray);
+    border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+    padding: 1.5rem 2rem;
+}
+
+.card-header h5 {
+    color: var(--white);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* ========================================
+   Tables - Dark Theme
+   ======================================== */
+
+.table {
+    color: var(--white);
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: var(--dark-gray);
+    color: var(--gold);
+    border-bottom: 2px solid var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 1.25rem 1rem;
+    font-weight: 600;
+}
+
+.table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid rgba(212, 168, 83, 0.1);
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(212, 168, 83, 0.05);
+}
+
+.table code {
+    color: var(--gold);
+    background: rgba(212, 168, 83, 0.1);
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+}
+
+/* ========================================
+   Room Cards - Luxury Style
+   ======================================== */
+
+.room-card {
+    background: var(--secondary-black);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.4s ease;
+    border: 1px solid rgba(212, 168, 83, 0.1);
+}
+
+.room-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: var(--gold);
+}
+
+.room-header {
+    background: var(--gradient-gold);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.room-number {
+    color: var(--primary-black);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.room-header .badge {
+    background: var(--primary-black);
+    color: var(--gold);
+}
+
+.room-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.room-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+}
+
+.room-body {
+    padding: 1.5rem;
+}
+
+.room-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.room-details {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.room-footer {
+    padding: 1rem 1.5rem;
+    background: var(--dark-gray);
+    border-top: 1px solid rgba(212, 168, 83, 0.1);
+}
+
+/* ========================================
+   Status Boxes
+   ======================================== */
+
+.status-box {
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    background: var(--dark-gray);
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    transition: all 0.3s ease;
+}
+
+.status-box:hover {
+    transform: scale(1.02);
+    border-color: var(--gold);
+}
+
+.status-box i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--gold);
+}
+
+.status-box h4 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.status-box p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* ========================================
+   Badges - Gold Theme
+   ======================================== */
+
+.badge {
+    border-radius: 20px;
+    padding: 0.5em 1em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+}
+
+.bg-warning {
+    background-color: var(--gold) !important;
+    color: var(--primary-black) !important;
+}
+
+.bg-success {
+    background-color: #2d7a4f !important;
+}
+
+.bg-danger {
+    background-color: #a33a3a !important;
+}
+
+.bg-info {
+    background-color: #3a6a8a !important;
+}
+
+.bg-secondary {
+    background-color: var(--dark-gray) !important;
+}
+
+/* ========================================
+   Buttons - Gold Theme
+   ======================================== */
+
+.btn {
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 0.75rem 1.75rem;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-primary {
+    background: var(--gradient-gold);
+    color: var(--primary-black);
+    border-color: var(--gold);
+}
+
+.btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+    color: var(--primary-black);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    color: var(--gold);
+    border-color: var(--gold);
+}
+
+.btn-outline-primary:hover {
+    background: var(--gold);
+    color: var(--primary-black);
+}
+
+.btn-success {
+    background: #2d7a4f;
+    border-color: #2d7a4f;
+}
+
+.btn-success:hover {
+    background: #3a9a63;
+    border-color: #3a9a63;
+}
+
+.btn-warning {
+    background: var(--gradient-gold);
+    color: var(--primary-black);
+    border-color: var(--gold);
+}
+
+.btn-warning:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    color: var(--primary-black);
+}
+
+.btn-outline-secondary {
+    color: var(--text-light);
+    border-color: var(--dark-gray);
+}
+
+.btn-outline-secondary:hover {
+    background: var(--dark-gray);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.btn-outline-danger {
+    color: #e57373;
+    border-color: #e57373;
+}
+
+.btn-outline-danger:hover {
+    background: #e57373;
+    color: var(--white);
+}
+
+/* ========================================
+   Forms - Dark Theme
+   ======================================== */
+
+.form-control, .form-select {
+    background: var(--dark-gray);
+    border: 1px solid rgba(212, 168, 83, 0.2);
+    color: var(--white);
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--dark-gray);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.2);
+    color: var(--white);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+.form-label {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+/* ========================================
+   Notifications - Luxury Style
+   ======================================== */
+
+.notification-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(212, 168, 83, 0.1);
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+    background: rgba(212, 168, 83, 0.05);
+}
+
+.notification-item.unread {
+    background: rgba(212, 168, 83, 0.1);
+    border-left: 3px solid var(--gold);
+}
+
+.notification-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--gradient-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-black);
+}
+
+/* ========================================
+   Footer - Luxury Style
+   ======================================== */
+
+.footer {
+    background: var(--gradient-dark);
+    color: var(--white);
+    padding: 4rem 0 2rem;
+    margin-top: 4rem;
+    border-top: 1px solid rgba(212, 168, 83, 0.2);
+}
+
+.footer h6 {
+    color: var(--gold);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.footer p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   Alerts
+   ======================================== */
+
+.alert {
+    border-radius: var(--border-radius);
+    border: 1px solid;
+    padding: 1rem 1.5rem;
+}
+
+.alert-success {
+    background: rgba(45, 122, 79, 0.2);
+    border-color: #2d7a4f;
+    color: #5ddb8e;
+}
+
+.alert-danger {
+    background: rgba(163, 58, 58, 0.2);
+    border-color: #a33a3a;
+    color: #e57373;
+}
+
+/* ========================================
+   Avatar
+   ======================================== */
+
+.avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--gradient-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--gold);
+}
+
+/* ========================================
+   Timeline - Luxury Style
+   ======================================== */
+
+.timeline {
+    list-style: none;
+    padding: 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 2.5rem;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(var(--gold), transparent);
+}
+
+.timeline-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: var(--gradient-gold);
+    border: 2px solid var(--gold);
+}
+
+.timeline-content h6 {
+    color: var(--gold);
+    font-size: 1rem;
+}
+
+.timeline-content p {
+    color: var(--text-muted);
+}
+
+/* ========================================
+   Room Status Grid
+   ======================================== */
+
+.room-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+.room-status-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--dark-gray);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    transition: all 0.3s ease;
+}
+
+.room-status-item:hover {
+    border-color: var(--gold);
+    transform: translateY(-3px);
+}
+
+.room-type {
+    display: block;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+}
+
+.room-count {
+    display: block;
+    color: var(--gold);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* ========================================
+   Hero Image Section
+   ======================================== */
+
+.hero-image {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), 
+                url('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 3rem;
+}
+
+/* ========================================
+   List Group - Dark Theme
+   ======================================== */
+
+.list-group-item {
+    background: var(--secondary-black);
+    border-color: rgba(212, 168, 83, 0.1);
+    color: var(--white);
+}
+
+.list-group-item:hover {
+    background: var(--dark-gray);
+}
+
+/* ========================================
+   Queue Cards
+   ======================================== */
+
+.queue-stats {
+    background: rgba(212, 168, 83, 0.1);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+}
+
+/* ========================================
+   Animations
+   ======================================== */
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.gold-shimmer {
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ========================================
+   Custom Scrollbar
+   ======================================== */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold-light);
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 991.98px) {
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        letter-spacing: 4px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .quick-action-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-header h1 {
+        font-size: 1.75rem;
+        letter-spacing: 2px;
+    }
+    
+    .dashboard-header p {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .stat-card-left {
+        flex-direction: row;
+        gap: 1rem;
+    }
+    
+    .stat-card-right {
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+.text-gold { color: var(--gold) !important; }
+.bg-gold { background-color: var(--gold) !important; color: #000 !important; }
+.btn-gold {
+    background-color: var(--gold) !important;
+    border-color: var(--gold) !important;
+    color: #000 !important;
+}
+.btn-gold:hover {
+    background-color: var(--gold-dark) !important;
+    border-color: var(--gold-dark) !important;
+    color: #000 !important;
+}
+.border-gold { border-color: var(--gold) !important; }
+
+.gold-border {
+    border: 2px solid var(--gold);
+    border-radius: var(--border-radius);
+}
+
+.divider-gold {
+    height: 2px;
+    background: var(--gradient-gold);
+    margin: 2rem 0;
+}

@@ -1,0 +1,286 @@
+@model HotelQueue.ViewModels.WaitlistViewModel
+
+@{
+    ViewData["Title"] = "Waitlist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var selectedType = Context.Request.Query["type"].ToString();
+    var dateFilter = Context.Request.Query["dateFilter"].ToString();
+    var hasCustomDate = !string.IsNullOrEmpty(Context.Request.Query["startDate"].ToString());
+    var searchQuery = Context.Request.Query["search"].ToString();
+}
+
+<style>
+    .input-group-text {
+        background-color: var(--secondary-black);
+        border-color: rgba(212, 168, 83, 0.3);
+        color: var(--text-light);
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(100%);
+        cursor: pointer;
+    }
+    input[type="date"] {
+        background-color: var(--secondary-black);
+        color: var(--white);
+        border-color: rgba(212, 168, 83, 0.3);
+    }
+    input[type="date"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-clock text-warning me-2"></i>Waitlist Management
+        </h2>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-list"></i></div>
+                    <p class="stat-label">Total Waiting</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number">@Model.TotalCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-crown"></i></div>
+                    <p class="stat-label">VIP Customers</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number">@Model.VIPCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-user"></i></div>
+                    <p class="stat-label">Regular Customers</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number">@Model.RegularCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-card-left">
+                    <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+                    <p class="stat-label">Promotions</p>
+                </div>
+                <div class="stat-card-right">
+                    <h3 class="stat-number">@Model.WaitlistHistory.Count(e => e.IsPromoted)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Current Waitlist</h5>
+                    <form method="get" class="d-flex gap-2 flex-wrap" id="filterForm">
+                        <select name="type" class="form-select form-select-sm" style="width: 110px;" onchange="document.getElementById('filterForm').submit();">
+                            <option value="" selected="@(selectedType == "")">All Type</option>
+                            <option value="VIP" selected="@(selectedType == "VIP")">VIP</option>
+                            <option value="Regular" selected="@(selectedType == "Regular")">Regular</option>
+                        </select>
+                        <select name="dateFilter" class="form-select form-select-sm" style="width: 130px;" onchange="handleWaitlistDateFilter(this)">
+                            <option value="">All Time</option>
+                            <option value="today" selected="@(dateFilter == "today")">Today</option>
+                            <option value="week" selected="@(dateFilter == "week")">This Week</option>
+                            <option value="month" selected="@(dateFilter == "month")">This Month</option>
+                            <option value="year" selected="@(dateFilter == "year")">This Year</option>
+                            <option value="custom" selected="@hasCustomDate">Custom Range</option>
+                        </select>
+                        <div class="input-group input-group-sm" id="customDateRangeWaitlist" style="display: none;">
+                            <input type="date" name="startDate" class="form-control" value="@Context.Request.Query["startDate"].ToString()" />
+                            <span class="input-group-text">to</span>
+                            <input type="date" name="endDate" class="form-control" value="@Context.Request.Query["endDate"].ToString()" />
+                        </div>
+                        <div class="input-group input-group-sm" style="width: 180px;">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" name="search" class="form-control" placeholder="Search..." value="@searchQuery" />
+                        </div>
+                        @if (!string.IsNullOrEmpty(selectedType) || !string.IsNullOrEmpty(dateFilter) || hasCustomDate || !string.IsNullOrEmpty(searchQuery))
+                        {
+                            <a asp-controller="Waitlist" asp-action="Index" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-times me-1"></i>Clear
+                            </a>
+                        }
+                        <button type="submit" id="applyBtnWaitlist" class="btn btn-dark btn-sm" style="display: none;">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Customer</th>
+                                    <th>Contact</th>
+                                    <th>Room</th>
+                                    <th>Preferred Date</th>
+                                    <th>Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int count = 1;}
+                                @foreach (var entry in Model.Waitlist)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@entry.Customer?.Name</td>
+                                        <td>
+                                            <div>@entry.Customer?.Email</div>
+                                            <small class="text-muted">@entry.Customer?.Phone</small>
+                                        </td>
+                                        <td>
+                                            @if (entry.Room != null)
+                                            {
+                                                <span class="badge @GetRoomBadge(entry.PreferredRoomType)">Room @entry.Room.RoomNumber - @entry.PreferredRoomType</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge @GetRoomBadge(entry.PreferredRoomType)">@entry.PreferredRoomType</span>
+                                            }
+                                        </td>
+                                        <td>@entry.PreferredCheckIn.ToString("MMM dd, yyyy HH:mm")</td>
+                                        <td>
+                                            @if (entry.CustomerType == CustomerType.VIP)
+                                            {
+                                                <span class="badge bg-danger"><i class="fas fa-crown me-1"></i>VIP</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Regular</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a asp-controller="Waitlist" asp-action="Details" asp-route-id="@entry.WaitlistId" 
+                                                   class="btn btn-outline-primary" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a asp-controller="Waitlist" asp-action="Edit" asp-route-id="@entry.WaitlistId" 
+                                                   class="btn btn-outline-warning" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form asp-controller="Waitlist" asp-action="Archive" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@entry.WaitlistId" />
+                                                    <button type="submit" class="btn btn-outline-secondary" title="Archive" 
+                                                            onclick="return confirm('Archive this waitlist entry?')">
+                                                        <i class="fas fa-archive"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                                @if (!Model.Waitlist.Any())
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                            <p class="mb-0">No customers in waitlist</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            @if (Model.NextInLine != null)
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Next in Line</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="avatar-circle bg-success mx-auto mb-3">
+                            <i class="fas fa-user text-white fa-2x"></i>
+                        </div>
+                        <h5>@Model.NextInLine.Customer?.Name</h5>
+                        <span class="badge @((Model.NextInLine.CustomerType == CustomerType.VIP) ? "bg-danger" : "bg-secondary")">
+                            @((Model.NextInLine.CustomerType == CustomerType.VIP) ? "VIP" : "Regular")
+                        </span>
+                        <hr>
+                        <p class="small text-muted mb-1">Room: Room @Model.NextInLine.Room?.RoomNumber - @Model.NextInLine.PreferredRoomType</p>
+                        <p class="small text-muted">Check-in: @Model.NextInLine.PreferredCheckIn.ToString("MMM dd, yyyy HH:mm")</p>
+                    </div>
+                </div>
+            }
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h5>
+                </div>
+                <div class="card-body">
+                    <ol class="mb-0">
+                        <li class="mb-2"><strong>Automatic Addition:</strong> Customer is added to waitlist when room is unavailable</li>
+                        <li class="mb-2"><strong>VIP Priority:</strong> VIP customers get priority in the queue (promoted first)</li>
+                        <li class="mb-2"><strong>Auto-Promotion:</strong> When a room becomes available, the next eligible customer is automatically promoted</li>
+                        <li><strong>Instant Notification:</strong> Promoted customers are automatically notified and their booking is confirmed</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleWaitlistDateFilter(select) {
+        var customRange = document.getElementById('customDateRangeWaitlist');
+        var applyBtn = document.getElementById('applyBtnWaitlist');
+        if (select.value === 'custom') {
+            customRange.style.display = 'flex';
+            applyBtn.style.display = 'block';
+        } else if (select.value !== '') {
+            select.form.submit();
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var dateFilter = document.querySelector('select[name="dateFilter"]');
+        var customRange = document.getElementById('customDateRangeWaitlist');
+        var applyBtn = document.getElementById('applyBtnWaitlist');
+        
+        if (dateFilter && customRange && dateFilter.value === 'custom') {
+            customRange.style.display = 'flex';
+            applyBtn.style.display = 'block';
+        }
+    });
+</script>
+
+@functions {
+    string GetRoomBadge(HotelQueue.Models.RoomType type)
+    {
+        return type switch
+        {
+            HotelQueue.Models.RoomType.Standard => "bg-secondary",
+            HotelQueue.Models.RoomType.Deluxe => "bg-info",
+            HotelQueue.Models.RoomType.Suite => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+}

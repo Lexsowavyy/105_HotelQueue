@@ -1,0 +1,95 @@
+@model HotelQueue.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #d4a853 0%, #b8912f 100%);">
+                    <h3 class="mb-0 text-white"><i class="fas fa-user-circle me-2"></i>My Profile</h3>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Profile" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label text-gold">First Name</label>
+                                <input asp-for="FirstName" class="form-control bg-dark border-secondary text-white" />
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label text-gold">Last Name</label>
+                                <input asp-for="LastName" class="form-control bg-dark border-secondary text-white" />
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label text-gold">Email Address</label>
+                            <input asp-for="Email" class="form-control bg-dark border-secondary text-white" readonly />
+                            <small class="text-muted">Email cannot be changed</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label text-gold">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control bg-dark border-secondary text-white" placeholder="Enter phone number" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-gold">Membership</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" disabled checked="@Model.IsVIP" />
+                                <label class="form-check-label">
+                                    @if (Model.IsVIP)
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-crown me-1"></i>VIP Member</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Regular Member</span>
+                                    }
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="ChangePassword" class="btn btn-outline-warning">
+                                <i class="fas fa-key me-2"></i>Change Password
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4" />
+
+                    <div class="text-center">
+                        <h5 class="text-gold mb-3"><i class="fas fa-calendar-check me-2"></i>My Bookings</h5>
+                        <a asp-controller="Reservation" asp-action="MyReservations" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>View All Reservations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

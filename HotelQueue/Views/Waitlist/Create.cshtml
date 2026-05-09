@@ -1,0 +1,135 @@
+@model HotelQueue.ViewModels.CreateWaitlistViewModel
+
+@{
+    ViewData["Title"] = "Add to Waitlist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .datetime-input {
+        background-color: #ffffff !important;
+        color: #000 !important;
+        border: 1px solid #ced4da;
+    }
+</style>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-user-plus text-warning me-2"></i>Add to Waitlist
+        </h2>
+        <a asp-controller="Waitlist" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="alert alert-info mb-4">
+                <h5><i class="fas fa-info-circle me-2"></i>How the Waitlist Works</h5>
+                <ul class="mb-0">
+                    <li>When no rooms are available, customers are automatically added to the waitlist</li>
+                    <li><strong>VIP customers get priority</strong> - they are promoted before regular customers</li>
+                    <li>When a room becomes available, the next eligible customer is automatically promoted</li>
+                    <li>Promoted customers receive a notification and their booking is confirmed</li>
+                </ul>
+            </div>
+
+            <form asp-controller="Waitlist" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning text-dark py-3">
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>Customer Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CustomerName" class="form-label">Full Name</label>
+                                <input asp-for="CustomerName" class="form-control" required placeholder="John Doe" />
+                                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CustomerEmail" class="form-label">Email</label>
+                                <input asp-for="CustomerEmail" type="email" class="form-control" required />
+                                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CustomerPhone" class="form-label">Phone</label>
+                                <input asp-for="CustomerPhone" class="form-control" required />
+                                <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CustomerType" class="form-label">Customer Type</label>
+                                <select asp-for="CustomerType" class="form-select">
+                                    <option value="@CustomerType.Regular">Regular</option>
+                                    <option value="@CustomerType.VIP">VIP</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-info text-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Preferences</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RoomId" class="form-label">Select Room</label>
+                                <select asp-for="RoomId" class="form-select" id="roomSelect" required>
+                                    <optgroup label="Standard">
+                                        @foreach (var room in Model.AvailableRooms.Where(r => r.Type == RoomType.Standard))
+                                        {
+                                            <option value="@room.RoomId" data-type="@RoomType.Standard">@room.RoomNumber</option>
+                                        }
+                                        @if (!Model.AvailableRooms.Any(r => r.Type == RoomType.Standard))
+                                        {
+                                            <option value="" disabled>No Standard rooms available</option>
+                                        }
+                                    </optgroup>
+                                    <optgroup label="Deluxe">
+                                        @foreach (var room in Model.AvailableRooms.Where(r => r.Type == RoomType.Deluxe))
+                                        {
+                                            <option value="@room.RoomId" data-type="@RoomType.Deluxe">@room.RoomNumber</option>
+                                        }
+                                        @if (!Model.AvailableRooms.Any(r => r.Type == RoomType.Deluxe))
+                                        {
+                                            <option value="" disabled>No Deluxe rooms available</option>
+                                        }
+                                    </optgroup>
+                                    <optgroup label="Suite">
+                                        @foreach (var room in Model.AvailableRooms.Where(r => r.Type == RoomType.Suite))
+                                        {
+                                            <option value="@room.RoomId" data-type="@RoomType.Suite">@room.RoomNumber</option>
+                                        }
+                                        @if (!Model.AvailableRooms.Any(r => r.Type == RoomType.Suite))
+                                        {
+                                            <option value="" disabled>No Suite rooms available</option>
+                                        }
+                                    </optgroup>
+                                </select>
+                                <span asp-validation-for="RoomId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PreferredCheckIn" class="form-label">Preferred Check-In</label>
+                                <input asp-for="PreferredCheckIn" type="datetime-local" class="form-control datetime-input" required min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="PreferredCheckIn" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-plus me-1"></i>Add to Waitlist
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

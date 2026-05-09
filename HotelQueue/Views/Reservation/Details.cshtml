@@ -1,0 +1,338 @@
+@model HotelQueue.Models.Reservation
+
+@{
+    ViewData["Title"] = "Booking Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-gold">
+            <i class="fas fa-calendar-alt me-2"></i>Booking Details
+        </h2>
+        <a asp-controller="Reservation" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-file-alt me-2 text-gold"></i>Reservation Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Booking ID</label>
+                            <div class="form-control bg-dark border-secondary"><code>@Model.ReservationId</code></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Status</label>
+                            <div>
+                                <span class="badge @GetStatusBadgeClass(Model.Status) fs-6">@Model.Status</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Customer Type</label>
+                            <div>
+                                @if (Model.CustomerType == CustomerType.VIP)
+                                {
+                                    <span class="badge bg-warning text-dark fs-6"><i class="fas fa-crown me-1"></i>VIP Member</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary fs-6">Regular Guest</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Priority Level</label>
+                            <div class="form-control bg-dark border-secondary">@Model.Priority</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Check-In</label>
+                            <div class="form-control bg-dark border-secondary">@Model.CheckInDate.ToString("dddd, MMMM dd, yyyy 'at' HH:mm")</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Check-Out</label>
+                            <div class="form-control bg-dark border-secondary">@Model.CheckOutDate.ToString("dddd, MMMM dd, yyyy 'at' HH:mm")</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Duration</label>
+                            <div class="form-control bg-dark border-secondary">@Model.TotalNights night(s)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">Total Price</label>
+                            <div class="form-control bg-dark border-secondary text-gold fs-5 fw-bold">₱@GetPriceInPHP(Model.TotalPrice).ToString("N2")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2 text-gold"></i>Booking Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="timeline">
+                        <li class="timeline-item">
+                            <div class="timeline-icon"></div>
+                            <div class="timeline-content">
+                                <h6>Booking Created</h6>
+                                <p>@Model.CreatedAt.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
+                            </div>
+                        </li>
+                        @if (Model.ConfirmedAt.HasValue)
+                        {
+                            <li class="timeline-item">
+                                <div class="timeline-icon" style="background: #2d7a4f;"></div>
+                                <div class="timeline-content">
+                                    <h6>Booking Confirmed</h6>
+                                    <p>@Model.ConfirmedAt.Value.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
+                                </div>
+                            </li>
+                        }
+                        @if (Model.CancelledAt.HasValue)
+                        {
+                            <li class="timeline-item">
+                                <div class="timeline-icon" style="background: #a33a3a;"></div>
+                                <div class="timeline-content">
+                                    <h6>Booking Cancelled</h6>
+                                    <p>@Model.CancelledAt.Value.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0 text-center"><i class="fas fa-user me-2 text-gold"></i>Guest Information</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="avatar-circle mx-auto mb-3">
+                        <i class="fas fa-user text-dark fa-2x"></i>
+                    </div>
+                    <h5 class="mb-1">@Model.Customer?.Name</h5>
+                    @if (Model.CustomerType == CustomerType.VIP)
+                    {
+                        <span class="badge bg-warning text-dark mb-3"><i class="fas fa-crown me-1"></i>VIP Member</span>
+                    }
+                    <hr class="border-secondary">
+                    <div class="text-start">
+                        <p class="mb-2"><i class="fas fa-envelope text-muted me-2"></i>@Model.Customer?.Email</p>
+                        <p class="mb-0"><i class="fas fa-phone text-muted me-2"></i>@Model.Customer?.Phone</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0 text-center"><i class="fas fa-bed me-2 text-gold"></i>Room Information</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="@GetRoomImage(Model.Room?.Type ?? 0, Model.Room?.RoomNumber)" alt="Room Image" class="img-fluid rounded mb-3" style="max-height: 180px; object-fit: cover;" />
+                    <h4 class="text-gold">Room @Model.Room?.RoomNumber</h4>
+                    <span class="badge @GetRoomBadge(Model.Room?.Type ?? 0)">@Model.Room?.Type</span>
+                    <hr class="border-secondary">
+                    <div class="text-start">
+                        <p class="mb-2"><i class="fas fa-tag text-muted me-2"></i>@Model.Room?.Type</p>
+                        <p class="mb-2"><i class="fas fa-peso-sign text-muted me-2"></i>₱@GetPriceInPHP(Model.Room?.PricePerNight ?? 0).ToString("N0") / night</p>
+                        <p class="mb-0"><i class="fas fa-users text-muted me-2"></i>Capacity: @Model.Room?.Capacity guests</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    
+                    @if (Model.Status == ReservationStatus.Pending)
+                    {
+                        @if (Model.CheckInDate >= DateTime.Today)
+                        {
+                            <form asp-controller="Reservation" asp-action="Confirm" method="post" class="mb-2">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@Model.ReservationId" />
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-check me-1"></i>Confirm Booking
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning mb-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                Check-in date has passed
+                            </div>
+                        }
+                        <form asp-controller="Reservation" asp-action="Cancel" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.ReservationId" />
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                <i class="fas fa-times me-1"></i>Cancel Booking
+                            </button>
+                        </form>
+                    }
+                    else if (Model.Status == ReservationStatus.Confirmed)
+                    {
+                        <div class="alert alert-success mb-2">
+                            <i class="fas fa-check-circle me-1"></i>
+                            Booking is confirmed for @Model.CheckInDate.ToString("MMM dd, yyyy")
+                        </div>
+                        <form asp-controller="Reservation" asp-action="Cancel" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.ReservationId" />
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to cancel this confirmed booking?')">
+                                <i class="fas fa-times me-1"></i>Cancel Booking
+                            </button>
+                        </form>
+                    }
+                    else if (Model.Status == ReservationStatus.OnWaitlist)
+                    {
+                        <div class="alert alert-info mb-2">
+                            <i class="fas fa-clock me-1"></i>
+                            You have been added to the waitlist. You will be notified when the room becomes available.
+                        </div>
+                        <form asp-controller="Waitlist" asp-action="Index" method="get" class="mb-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-check me-1"></i>Confirm Join Waitlist
+                            </button>
+                        </form>
+                        <form asp-controller="Reservation" asp-action="Cancel" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.ReservationId" />
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to cancel this waitlist entry?')">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </button>
+                        </form>
+                    }
+                    else if (Model.Status == ReservationStatus.Cancelled)
+                    {
+                        <div class="alert alert-warning mb-2">
+                            <i class="fas fa-clock me-1"></i>
+                            This booking was cancelled
+                        </div>
+                        <form asp-controller="Waitlist" asp-action="Index" method="get" class="mb-2">
+                            <button type="submit" class="btn btn-warning w-100 text-dark">
+                                <i class="fas fa-clock me-1"></i>Join Waitlist
+                            </button>
+                        </form>
+                        <form asp-controller="Reservation" asp-action="Index" method="get">
+                            <button type="submit" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-arrow-left me-1"></i>Cancel
+                            </button>
+                        </form>
+                    }
+                    else if (Model.Status == ReservationStatus.Completed)
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-check-double me-1"></i>
+                            This booking has been completed
+                        </div>
+                    }
+                    else if (Model.Status == ReservationStatus.Expired)
+                    {
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-clock me-1"></i>
+                            This booking has expired
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(HotelQueue.Models.ReservationStatus status)
+    {
+        return status switch
+        {
+            HotelQueue.Models.ReservationStatus.Pending => "bg-warning text-dark",
+            HotelQueue.Models.ReservationStatus.Confirmed => "bg-success",
+            HotelQueue.Models.ReservationStatus.Cancelled => "bg-danger",
+            HotelQueue.Models.ReservationStatus.Expired => "bg-secondary",
+            HotelQueue.Models.ReservationStatus.Completed => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetRoomBadge(HotelQueue.Models.RoomType type)
+    {
+        return type switch
+        {
+            HotelQueue.Models.RoomType.Standard => "bg-secondary",
+            HotelQueue.Models.RoomType.Deluxe => "bg-info",
+            HotelQueue.Models.RoomType.Suite => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetRoomImage(HotelQueue.Models.RoomType type, string roomNumber)
+    {
+        if (type == HotelQueue.Models.RoomType.Standard)
+        {
+            return roomNumber switch
+            {
+                "101" => "/images/standard-room.jpg",
+                "102" => "/images/prado_luxury_hotel_room_standard_family_inner_view.jpg",
+                "103" => "/images/RH-12.jpg",
+                "104" => "/images/Amorgos-Standard-Room1-e1464286427430.jpg",
+                "105" => "/images/images.jpg",
+                _ => "/images/standard-room.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Deluxe)
+        {
+            return roomNumber switch
+            {
+                "201" => "/images/Deluxe/deluxe-room-sea-view.jpg",
+                "202" => "/images/Deluxe/istockphoto-1056769738-612x612.jpg",
+                "203" => "/images/Deluxe/Mountain-View-Deluxe-King2-788x650.jpg",
+                "204" => "/images/Deluxe/Superior-DeLuxe-Room_TB.jpg",
+                "205" => "/images/Deluxe/the-phoenician-scottsdale-grand-deluxe-room-01-1200x630.jpg",
+                _ => "/images/Deluxe/deluxe-room-sea-view.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Suite)
+        {
+            return roomNumber switch
+            {
+                "301" => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+                "302" => "/images/Suites/caption.jpg",
+                "303" => "/images/Suites/premium-deluxe-renaissance.jpg",
+                "304" => "/images/Suites/presidential-da-vinci.jpg",
+                "305" => "/images/Suites/Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+                _ => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg"
+            };
+        }
+        return "/images/standard-room.jpg";
+    }
+
+    decimal GetPriceInPHP(decimal priceInUSD)
+    {
+        decimal exchangeRate = 56.00m;
+        return priceInUSD * exchangeRate;
+    }
+}

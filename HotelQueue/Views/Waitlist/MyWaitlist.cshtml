@@ -1,0 +1,185 @@
+@model HotelQueue.ViewModels.WaitlistViewModel
+
+@{
+    ViewData["Title"] = "My Waitlist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="dashboard-header text-center mb-5">
+        <div class="header-content">
+            <h1 class="gold-shimmer">My Waitlist</h1>
+            <p class="text-gold">Track your room availability requests</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x text-gold mb-2"></i>
+                    <h3 class="mb-1">@Model.TotalCount</h3>
+                    <p class="mb-0 text-muted">Total Waitlist</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-crown fa-2x text-warning mb-2"></i>
+                    <h3 class="mb-1">@Model.VIPCount</h3>
+                    <p class="mb-0 text-muted">VIP Requests</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-user fa-2x text-secondary mb-2"></i>
+                    <h3 class="mb-1">@Model.RegularCount</h3>
+                    <p class="mb-0 text-muted">Regular Requests</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-list me-2 text-gold"></i>Waitlist Entries</h5>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#joinWaitlistModal">
+                <i class="fas fa-plus me-1"></i>Join Waitlist
+            </button>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Room Type</th>
+                            <th>Preferred Check-In</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int position = 1;
+                        }
+                        @foreach (var entry in Model.Waitlist)
+                        {
+                            <tr>
+                                <td><strong>#@position</strong></td>
+                                <td>
+                                    @switch (entry.PreferredRoomType)
+                                    {
+                                        case RoomType.Suite:
+                                            <span class="badge bg-purple"><i class="fas fa-star me-1"></i>Suite</span>
+                                            break;
+                                        case RoomType.Deluxe:
+                                            <span class="badge bg-primary"><i class="fas fa-bed me-1"></i>Deluxe</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary"><i class="fas fa-bed me-1"></i>Standard</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>@entry.PreferredCheckIn.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    @if (entry.CustomerType == CustomerType.VIP)
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-crown me-1"></i>VIP</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Regular</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (entry.IsPromoted)
+                                    {
+                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Promoted</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info text-dark"><i class="fas fa-hourglass-half me-1"></i>Waiting</span>
+                                    }
+                                </td>
+                                <td>
+                                    <form asp-controller="Waitlist" asp-action="LeaveWaitlist" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@entry.WaitlistId" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                onclick="return confirm('Are you sure you want to leave the waitlist?');">
+                                            <i class="fas fa-times"></i> Leave
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            position++;
+                        }
+                        @if (!Model.Waitlist.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <i class="fas fa-clipboard-list fa-4x mb-3 text-muted opacity-25"></i>
+                                    <h5 class="text-muted">No waitlist entries</h5>
+                                    <p class="text-muted">You're not currently on any waitlist.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="joinWaitlistModal" tabindex="-1" aria-labelledby="joinWaitlistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid #d4a853;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #d4a853 0%, #b8912f 100%);">
+                <h5 class="modal-title text-white" id="joinWaitlistModalLabel">
+                    <i class="fas fa-clock me-2"></i>Join Waitlist
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Waitlist" asp-action="JoinWaitlist" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Enter your preferred room details. We'll notify you when a room becomes available.</p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-gold">Preferred Room Type</label>
+                        <select name="RoomType" class="form-select bg-dark border-secondary text-white">
+                            <option value="0">Standard Room</option>
+                            <option value="1">Deluxe Room</option>
+                            <option value="2">Suite</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-gold">Preferred Check-In Date</label>
+                        <input type="date" name="PreferredCheckIn" class="form-control bg-dark border-secondary text-white" 
+                               value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Join Waitlist
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

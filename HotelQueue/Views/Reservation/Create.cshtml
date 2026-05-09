@@ -1,0 +1,337 @@
+@model HotelQueue.ViewModels.CreateReservationViewModel
+
+@{
+    ViewData["Title"] = "Book a Room";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .datetime-input {
+        background-color: #ffffff !important;
+        color: #000 !important;
+        border: 1px solid #ced4da;
+    }
+    .datetime-input::-webkit-calendar-picker-indicator {
+        filter: invert(0%);
+        cursor: pointer;
+    }
+</style>
+
+<div class="container">
+    <form asp-controller="Reservation" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-user me-2 text-gold"></i>Guest Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="CustomerName" class="form-label">Full Name</label>
+                                <input asp-for="CustomerName" class="form-control" required placeholder="Juan dela Cruz" />
+                                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CustomerEmail" class="form-label">Email Address</label>
+                                <input asp-for="CustomerEmail" type="email" class="form-control" required placeholder="juan@email.com" />
+                                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CustomerPhone" class="form-label">Phone Number</label>
+                                <input asp-for="CustomerPhone" class="form-control" required placeholder="0912-345-6789" />
+                                <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CustomerType" class="form-label">Membership Type</label>
+                                <select asp-for="CustomerType" class="form-select">
+                                    <option value="@CustomerType.Regular">Regular Guest</option>
+                                    <option value="@CustomerType.VIP">VIP Member (Priority Queue)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-bed me-2 text-gold"></i>Room Selection</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="RoomId" class="form-label">Select Room</label>
+                            <select asp-for="RoomId" class="form-select" id="roomSelect" required onchange="updateRoomImage(); checkRoomAvailability();">
+                                <option value="">-- Choose a Room --</option>
+                                <optgroup label="Available Rooms">
+                                    @foreach (var room in Model.AllRooms.Where(r => r.IsAvailable))
+                                    {
+                                        <option value="@room.RoomId" data-type="@room.Type" data-roomnumber="@room.RoomNumber" data-image="@GetRoomImageUrl(room.Type, room.RoomNumber)" data-available="true">
+                                            Room @room.RoomNumber - @room.Type (₱@GetPriceInPHP(room.PricePerNight).ToString("N0")/night) - @room.Capacity guests [Available]
+                                        </option>
+                                    }
+                                </optgroup>
+                                <optgroup label="Occupied Rooms (Join Waitlist)">
+                                    @foreach (var room in Model.AllRooms.Where(r => !r.IsAvailable))
+                                    {
+                                        <option value="@room.RoomId" data-type="@room.Type" data-roomnumber="@room.RoomNumber" data-image="@GetRoomImageUrl(room.Type, room.RoomNumber)" data-available="false">
+                                            Room @room.RoomNumber - @room.Type (₱@GetPriceInPHP(room.PricePerNight).ToString("N0")/night) - @room.Capacity guests [Occupied]
+                                        </option>
+                                    }
+                                </optgroup>
+                            </select>
+                            <span asp-validation-for="RoomId" class="text-danger"></span>
+                        </div>
+                        <div id="roomImageContainer" class="text-center mt-3" style="display: none;">
+                            <img id="roomImage" src="" alt="Room Image" class="img-fluid rounded" style="max-height: 200px; object-fit: cover;" />
+                        </div>
+                        <div id="roomBookingInfo"></div>
+
+                        @if (!Model.AllRooms.Any())
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                No rooms available. Please join our waitlist.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-calendar me-2 text-gold"></i>Stay Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="CheckInDate" class="form-label">Check-In Date & Time</label>
+                                <input asp-for="CheckInDate" type="datetime-local" class="form-control datetime-input" required min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CheckOutDate" class="form-label">Check-Out Date & Time</label>
+                                <input asp-for="CheckOutDate" type="datetime-local" class="form-control datetime-input" required />
+                                <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2" id="confirmBookingBtn">
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                        <i class="fas fa-calendar-check me-2"></i>Confirm Booking
+                    </button>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card sticky-top" style="top: 100px;">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-center"><i class="fas fa-info-circle me-2 text-gold"></i>Booking Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6 class="text-gold"><i class="fas fa-crown me-2"></i>VIP Priority Queue</h6>
+                            <p class="text-muted small">VIP members get priority processing through our heap-based priority queue system.</p>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="mb-4">
+                            <h6 class="text-gold"><i class="fas fa-list me-2"></i>Regular FCFS</h6>
+                            <p class="text-muted small">Regular guests are processed on a first-come, first-served basis using our FIFO queue.</p>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="mb-4">
+                            <h6 class="text-gold"><i class="fas fa-clock me-2"></i>Waitlist</h6>
+                            <p class="text-muted small">If no rooms are available, you'll be automatically added to our waitlist.</p>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="text-center">
+                            <i class="fas fa-shield-alt fa-2x text-gold mb-2"></i>
+                            <p class="text-muted small mb-0">Your booking is secured with our advanced queue system</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var roomBookings = @Html.Raw(Json.Serialize(Model.RoomBookings));
+        
+        document.querySelector('form').addEventListener('submit', function(e) {
+            var checkInValue = document.getElementById('CheckInDate').value;
+            var checkOutValue = document.getElementById('CheckOutDate').value;
+            
+            if (!checkInValue || !checkOutValue) {
+                return;
+            }
+            
+            var checkIn = new Date(checkInValue);
+            var checkOut = new Date(checkOutValue);
+            
+            if (checkOut <= checkIn) {
+                e.preventDefault();
+                alert('Check-out date must be after check-in date.');
+                return;
+            }
+            
+            var roomId = parseInt(document.getElementById('roomSelect').value);
+            if (roomId && roomBookings[roomId]) {
+                var isAvailable = document.querySelector('#roomSelect option:checked').getAttribute('data-available') === 'true';
+                if (!isAvailable) {
+                    var bookings = roomBookings[roomId];
+                    for (var i = 0; i < bookings.length; i++) {
+                        var bookingCheckIn = new Date(bookings[i].checkIn);
+                        var bookingCheckOut = new Date(bookings[i].checkOut);
+                        if (checkIn < bookingCheckOut && checkOut > bookingCheckIn) {
+                            e.preventDefault();
+                            alert('The selected dates overlap with an existing booking (' + formatDate(bookingCheckIn) + ' to ' + formatDate(bookingCheckOut) + '). Please select different dates.');
+                            return;
+                        }
+                    }
+                }
+            }
+        });
+
+        function formatDate(date) {
+            var d = new Date(date);
+            return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function updateRoomImage() {
+            var select = document.getElementById('roomSelect');
+            var selectedOption = select.options[select.selectedIndex];
+            var imageContainer = document.getElementById('roomImageContainer');
+            var roomImage = document.getElementById('roomImage');
+            
+            if (selectedOption.value) {
+                var imageUrl = selectedOption.getAttribute('data-image');
+                roomImage.src = imageUrl;
+                imageContainer.style.display = 'block';
+            } else {
+                imageContainer.style.display = 'none';
+            }
+        }
+
+        function checkRoomAvailability() {
+            var select = document.getElementById('roomSelect');
+            var selectedOption = select.options[select.selectedIndex];
+            var submitBtn = document.getElementById('submitBtn');
+            var checkInInput = document.getElementById('CheckInDate');
+            var checkOutInput = document.getElementById('CheckOutDate');
+            var roomInfo = document.getElementById('roomBookingInfo');
+            
+            if (selectedOption.value) {
+                var isAvailable = selectedOption.getAttribute('data-available') === 'true';
+                var roomId = parseInt(selectedOption.value);
+                
+                if (!isAvailable && roomBookings[roomId]) {
+                    submitBtn.innerHTML = '<i class="fas fa-clock me-2"></i>Join Waitlist';
+                    submitBtn.classList.remove('btn-primary');
+                    submitBtn.classList.add('btn-warning', 'text-dark');
+                    
+                    var bookings = roomBookings[roomId];
+                    var infoHTML = '<div class="alert alert-info mt-2"><small><i class="fas fa-info-circle me-1"></i><strong>Room is currently booked during:</strong><br>';
+                    for (var i = 0; i < bookings.length; i++) {
+                        infoHTML += '• ' + formatDate(new Date(bookings[i].checkIn)) + ' to ' + formatDate(new Date(bookings[i].checkOut)) + '<br>';
+                    }
+                    infoHTML += 'Check-in date cannot be within these periods.</small></div>';
+                    if (roomInfo) {
+                        roomInfo.innerHTML = infoHTML;
+                    }
+                    
+                    checkInInput.disabled = false;
+                    checkInInput.min = new Date().toISOString().slice(0, 16);
+                } else if (isAvailable) {
+                    submitBtn.innerHTML = '<i class="fas fa-calendar-check me-2"></i>Confirm Booking';
+                    submitBtn.classList.remove('btn-warning', 'text-dark');
+                    submitBtn.classList.add('btn-primary');
+                    if (roomInfo) {
+                        roomInfo.innerHTML = '';
+                    }
+                } else {
+                    submitBtn.innerHTML = '<i class="fas fa-clock me-2"></i>Join Waitlist';
+                    submitBtn.classList.remove('btn-primary');
+                    submitBtn.classList.add('btn-warning', 'text-dark');
+                    if (roomInfo) {
+                        roomInfo.innerHTML = '<div class="alert alert-info mt-2"><small><i class="fas fa-info-circle me-1"></i>Room is occupied. You will be added to the waitlist.</small></div>';
+                    }
+                }
+            } else {
+                submitBtn.innerHTML = '<i class="fas fa-calendar-check me-2"></i>Confirm Booking';
+                submitBtn.classList.remove('btn-warning', 'text-dark');
+                submitBtn.classList.add('btn-primary');
+                if (roomInfo) {
+                    roomInfo.innerHTML = '';
+                }
+            }
+        }
+
+        document.getElementById('roomSelect').addEventListener('change', function() {
+            checkRoomAvailability();
+            updateRoomImage();
+        });
+        window.addEventListener('load', function() {
+            checkRoomAvailability();
+            updateRoomImage();
+        });
+    </script>
+}
+
+@functions {
+    decimal GetPriceInPHP(decimal priceInUSD)
+    {
+        decimal exchangeRate = 56.00m;
+        return priceInUSD * exchangeRate;
+    }
+
+    string GetRoomImageUrl(HotelQueue.Models.RoomType type, string roomNumber)
+    {
+        if (type == HotelQueue.Models.RoomType.Standard)
+        {
+            return roomNumber switch
+            {
+                "101" => "/images/standard-room.jpg",
+                "102" => "/images/prado_luxury_hotel_room_standard_family_inner_view.jpg",
+                "103" => "/images/RH-12.jpg",
+                "104" => "/images/Amorgos-Standard-Room1-e1464286427430.jpg",
+                "105" => "/images/images.jpg",
+                _ => "/images/standard-room.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Deluxe)
+        {
+            return roomNumber switch
+            {
+                "201" => "/images/Deluxe/deluxe-room-sea-view.jpg",
+                "202" => "/images/Deluxe/istockphoto-1056769738-612x612.jpg",
+                "203" => "/images/Deluxe/Mountain-View-Deluxe-King2-788x650.jpg",
+                "204" => "/images/Deluxe/Superior-DeLuxe-Room_TB.jpg",
+                "205" => "/images/Deluxe/the-phoenician-scottsdale-grand-deluxe-room-01-1200x630.jpg",
+                _ => "/images/Deluxe/deluxe-room-sea-view.jpg"
+            };
+        }
+        else if (type == HotelQueue.Models.RoomType.Suite)
+        {
+            return roomNumber switch
+            {
+                "301" => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg",
+                "302" => "/images/Suites/caption.jpg",
+                "303" => "/images/Suites/premium-deluxe-renaissance.jpg",
+                "304" => "/images/Suites/presidential-da-vinci.jpg",
+                "305" => "/images/Suites/Royal-Suite-Gioconda-Bedroom-Renaissance-style-819x546.jpg",
+                _ => "/images/Suites/5d5b28cf-7701-4173-bf35-a1a8c2e6052a-celebrityhotelsuites_hoteldanieli.jpg"
+            };
+        }
+        return "/images/standard-room.jpg";
+    }
+}
