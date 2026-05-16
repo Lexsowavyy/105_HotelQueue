@@ -14,6 +14,8 @@ public class ReservationService
     private readonly RoomService _roomService;
     private readonly NotificationService _notificationService;
     private readonly WaitlistService _waitlistService;
+    private bool _initialized = false;
+    private readonly object _initLock = new();
 
     public ReservationService(
         HotelDbContext context,
@@ -31,6 +33,34 @@ public class ReservationService
         _roomService = roomService;
         _notificationService = notificationService;
         _waitlistService = waitlistService;
+    }
+
+    private void EnsureInitialized()
+    {
+        if (_initialized) return;
+        lock (_initLock)
+        {
+            if (_initialized) return;
+            var all = _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Room)
+                .ToList();
+            foreach (var r in all)
+            {
+                if (!_reservationHashTable.Contains(r.ReservationId))
+                {
+                    _reservationHashTable.Add(r);
+                    if (r.Status == ReservationStatus.Pending)
+                    {
+                        if (r.CustomerType == CustomerType.VIP)
+                            _vipQueue.Enqueue(r);
+                        else
+                            _regularQueue.Enqueue(r);
+                    }
+                }
+            }
+            _initialized = true;
+        }
     }
 
     public (Reservation? Reservation, WaitlistEntry? WaitlistEntry, bool IsWaitlist) CreateReservation(string customerName, string customerEmail, string customerPhone,
@@ -157,6 +187,22 @@ public class ReservationService
 
     public Reservation? GetReservationById(string reservationId)
     {
+        EnsureInitialized();
+        var result = _reservationHashTable.Get(reservationId);
+        if (result != null) return result;
+
+        return _context.Reservations
+            .Include(r => r.Customer)
+            .Include(r => r.Room)
+            .FirstOrDefault(r => r.ReservationId == reservationId);
+    }
+
+    public Reservation? GetReservation(string reservationId)
+    {
+        EnsureInitialized();
+        var result = _reservationHashTable.Get(reservationId);
+        if (result != null) return result;
+
         return _context.Reservations
             .Include(r => r.Customer)
             .Include(r => r.Room)
@@ -280,14 +326,6 @@ public class ReservationService
         }
     }
 
-    public Reservation? GetReservation(string reservationId)
-    {
-        return _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .FirstOrDefault(r => r.ReservationId == reservationId);
-    }
-
     public void CheckAndPromoteFromWaitlist()
     {
         var availableRooms = _roomService.GetAvailableRooms();
@@ -299,6 +337,7 @@ public class ReservationService
 
     public int CompleteExpiredCheckouts()
     {
+        EnsureInitialized();
         var now = DateTime.Now;
         var confirmedReservations = _context.Reservations
             .Include(r => r.Customer)
@@ -324,11 +363,10 @@ public class ReservationService
 
     public List<Reservation> GetRoomBookings(int roomId)
     {
-        return _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .Where(r => r.RoomId == roomId && 
-                        r.Status != ReservationStatus.Cancelled && 
+        EnsureInitialized();
+        var roomBookings = _reservationHashTable.GetByRoom(roomId);
+        return roomBookings
+            .Where(r => r.Status != ReservationStatus.Cancelled &&
                         r.Status != ReservationStatus.Archived &&
                         r.CheckOutDate >= DateTime.Now)
             .OrderBy(r => r.CheckInDate)
@@ -351,60 +389,47 @@ public class ReservationService
 
     public List<Reservation> GetAllReservations()
     {
-        return _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .OrderByDescending(r => r.CreatedAt)
-            .ToList();
+        EnsureInitialized();
+        var all = _reservationHashTable.GetAll();
+        return QuickSorter.SortByCreatedDate(all, ascending: false);
     }
 
     public List<Reservation> GetReservationsByStatus(ReservationStatus status)
     {
-        return _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .Where(r => r.Status == status)
-            .OrderByDescending(r => r.CreatedAt)
-            .ToList();
+        EnsureInitialized();
+        var byStatus = _reservationHashTable.GetByStatus(status);
+        return QuickSorter.SortByCreatedDate(byStatus, ascending: false);
     }
 
     public List<Reservation> GetVIPQueueReservations()
     {
-        return _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .Where(r => r.Status == ReservationStatus.Pending && r.CustomerType == CustomerType.VIP)
-            .OrderByDescending(r => r.CreatedAt)
+        EnsureInitialized();
+        var allVip = _reservationHashTable.GetByStatus(ReservationStatus.Pending)
+            .Where(r => r.CustomerType == CustomerType.VIP)
             .ToList();
+        return QuickSorter.SortByCreatedDate(allVip, ascending: false);
     }
 
     public List<Reservation> GetRegularQueueReservations()
     {
-        return _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .Where(r => r.Status == ReservationStatus.Pending && r.CustomerType == CustomerType.Regular)
-            .OrderByDescending(r => r.CreatedAt)
+        EnsureInitialized();
+        var allRegular = _reservationHashTable.GetByStatus(ReservationStatus.Pending)
+            .Where(r => r.CustomerType == CustomerType.Regular)
             .ToList();
+        return QuickSorter.SortByCreatedDate(allRegular, ascending: false);
     }
 
     public List<Reservation> SearchReservations(string searchTerm)
     {
-        var term = searchTerm.ToLower();
-        return _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .Where(r => r.ReservationId.ToLower().Contains(term) ||
-                        (r.Customer != null && r.Customer.Name.ToLower().Contains(term)) ||
-                        (r.Customer != null && r.Customer.Email.ToLower().Contains(term)) ||
-                        (r.Room != null && r.Room.RoomNumber.ToLower().Contains(term)))
-            .OrderByDescending(r => r.CreatedAt)
-            .ToList();
+        EnsureInitialized();
+        return _reservationHashTable.Search(searchTerm);
     }
 
     public List<Reservation> GetReservationsInDateRange(DateTime startDate, DateTime endDate)
     {
-        return BinarySearcher.FindReservationsInDateRange(GetAllReservations(), startDate, endDate);
+        EnsureInitialized();
+        var all = _reservationHashTable.GetAll();
+        return BinarySearcher.FindReservationsInDateRange(all, startDate, endDate);
     }
 
     public List<Reservation> GetSortedReservations(string sortBy, bool ascending = true)

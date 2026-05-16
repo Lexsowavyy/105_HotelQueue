@@ -90,6 +90,10 @@ public static class QuickSorter
 
     private static int Partition(List<Reservation> list, int low, int high, Func<Reservation, Reservation, int> comparison)
     {
+        int mid = low + (high - low) / 2;
+        int pivotIndex = MedianOfThree(list, low, mid, high, comparison);
+        (list[pivotIndex], list[high]) = (list[high], list[pivotIndex]);
+
         Reservation pivot = list[high];
         int i = low - 1;
 
@@ -106,6 +110,17 @@ public static class QuickSorter
         return i + 1;
     }
 
+    private static int MedianOfThree(List<Reservation> list, int low, int mid, int high, Func<Reservation, Reservation, int> comparison)
+    {
+        if (comparison(list[low], list[mid]) > 0)
+            (list[low], list[mid]) = (list[mid], list[low]);
+        if (comparison(list[low], list[high]) > 0)
+            (list[low], list[high]) = (list[high], list[low]);
+        if (comparison(list[mid], list[high]) > 0)
+            (list[mid], list[high]) = (list[high], list[mid]);
+        return mid;
+    }
+
     public static PerformanceMetrics MeasureSortPerformance(List<Reservation> reservations, string sortType)
     {
         var list = new List<Reservation>(reservations);
@@ -113,11 +128,22 @@ public static class QuickSorter
         int comparisons = 0;
         int swaps = 0;
 
-        QuickSortWithMetrics(list, 0, list.Count - 1, (r1, r2) =>
+        Func<Reservation, Reservation, int> comparator = sortType.ToLower() switch
+        {
+            "checkindate" => (r1, r2) => r1.CheckInDate.CompareTo(r2.CheckInDate),
+            "createddate" => (r1, r2) => r1.CreatedAt.CompareTo(r2.CreatedAt),
+            "totalprice" => (r1, r2) => r1.TotalPrice.CompareTo(r2.TotalPrice),
+            "priority" => (r1, r2) => r1.Priority.CompareTo(r2.Priority),
+            _ => (r1, r2) => r1.CheckInDate.CompareTo(r2.CheckInDate)
+        };
+
+        var wrappedComparator = (Reservation r1, Reservation r2) =>
         {
             comparisons++;
-            return r1.CreatedAt.CompareTo(r2.CreatedAt);
-        }, ref swaps);
+            return comparator(r1, r2);
+        };
+
+        QuickSortWithMetrics(list, 0, list.Count - 1, wrappedComparator, ref swaps);
 
         stopwatch.Stop();
 
@@ -145,6 +171,11 @@ public static class QuickSorter
     private static int PartitionWithMetrics(List<Reservation> list, int low, int high, 
         Func<Reservation, Reservation, int> comparison, ref int swaps)
     {
+        int mid = low + (high - low) / 2;
+        int pivotIndex = MedianOfThreeWithMetrics(list, low, mid, high, comparison, ref swaps);
+        (list[pivotIndex], list[high]) = (list[high], list[pivotIndex]);
+        swaps++;
+
         Reservation pivot = list[high];
         int i = low - 1;
 
@@ -161,6 +192,27 @@ public static class QuickSorter
         (list[i + 1], list[high]) = (list[high], list[i + 1]);
         swaps++;
         return i + 1;
+    }
+
+    private static int MedianOfThreeWithMetrics(List<Reservation> list, int low, int mid, int high, 
+        Func<Reservation, Reservation, int> comparison, ref int swaps)
+    {
+        if (comparison(list[low], list[mid]) > 0)
+        {
+            (list[low], list[mid]) = (list[mid], list[low]);
+            swaps++;
+        }
+        if (comparison(list[low], list[high]) > 0)
+        {
+            (list[low], list[high]) = (list[high], list[low]);
+            swaps++;
+        }
+        if (comparison(list[mid], list[high]) > 0)
+        {
+            (list[mid], list[high]) = (list[high], list[mid]);
+            swaps++;
+        }
+        return mid;
     }
 }
 

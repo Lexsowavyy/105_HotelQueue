@@ -67,6 +67,15 @@ builder.Services.AddScoped<DashboardService>(sp =>
     );
 });
 
+builder.Services.AddScoped<PerformanceBenchmarkService>(sp =>
+{
+    return new PerformanceBenchmarkService(
+        sp.GetRequiredService<ReservationService>(),
+        sp.GetRequiredService<BaselineReservationService>(),
+        sp.GetRequiredService<RoomService>()
+    );
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

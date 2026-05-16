@@ -1,0 +1,16 @@
+## .NET
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+*.staticwebassets.*
+.vs/
+*.user
+*.suo
+
+## IDE
+.DS_Store
+*.swp

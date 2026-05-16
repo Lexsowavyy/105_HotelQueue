@@ -183,12 +183,20 @@ public class GreedyAllocator
 
     private Room? FindBestRoomForDate(List<Room> rooms, Reservation reservation)
     {
-        var availableRooms = rooms.Where(r => r.IsAvailable).ToList();
-        
-        if (!availableRooms.Any())
-            return null;
+        Room? best = null;
+        decimal minCost = decimal.MaxValue;
 
-        return availableRooms.OrderBy(r => r.PricePerNight).FirstOrDefault();
+        foreach (var room in rooms)
+        {
+            if (!room.IsAvailable) continue;
+            if (room.PricePerNight < minCost)
+            {
+                minCost = room.PricePerNight;
+                best = room;
+            }
+        }
+
+        return best;
     }
 }
 

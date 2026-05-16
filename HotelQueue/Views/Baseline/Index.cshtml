@@ -1,7 +1,7 @@
 @model HotelQueue.Controllers.BaselineComparisonViewModel
 
 @{
-    ViewData["Title"] = "Baseline vs Optimized Comparison";
+    ViewData["Title"] = "Baseline vs Optimized";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,51 +11,7 @@
 <div class="container-fluid px-3 px-lg-4">
     <div class="dashboard-header text-center mb-4 mb-md-5">
         <div class="header-content">
-            <h1 class="gold-shimmer">Baseline vs Optimized Comparison</h1>
-        </div>
-    </div>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">
-                <i class="fas fa-list-ol me-2 text-gold"></i>How to Use This Page (Step-by-Step)
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-6 col-lg-3">
-                    <div class="step-card h-100">
-                        <div class="step-number">1</div>
-                        <h6>Select Data Size</h6>
-                        <p class="small text-muted mb-0">Choose how many reservation records to test. The system uses the same dataset for both Baseline and Optimized.</p>
-                        <p class="small text-gold mt-2 mb-0"><strong>Input:</strong> @Model.DataSize reservation records</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="step-card h-100">
-                        <div class="step-number">2</div>
-                        <h6>Run Sort Test</h6>
-                        <p class="small text-muted mb-0">Click "Run Sort Test" to compare Bubble Sort O(n²) vs Quick Sort O(n log n) on the same data.</p>
-                        <p class="small text-gold mt-2 mb-0"><strong>Output:</strong> Execution time, comparisons, swaps</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="step-card h-100">
-                        <div class="step-number">3</div>
-                        <h6>Run Search Test</h6>
-                        <p class="small text-muted mb-0">Click "Run Search Test" to compare Linear Search O(n) vs HashTable + Binary Search O(1)/O(log n).</p>
-                        <p class="small text-gold mt-2 mb-0"><strong>Output:</strong> Search speed comparison</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="step-card h-100">
-                        <div class="step-number">4</div>
-                        <h6>Interpret Results</h6>
-                        <p class="small text-muted mb-0">View bar charts, improvement percentages, and the full Before vs After comparison table aligned with your deliverables.</p>
-                        <p class="small text-gold mt-2 mb-0"><strong>Output:</strong> % improvement per operation</p>
-                    </div>
-                </div>
-            </div>
+            <h1 class="gold-shimmer">Baseline vs Optimized</h1>
         </div>
     </div>
 
@@ -63,25 +19,38 @@
         <div class="card-body">
             <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
                 <div>
-                    <span class="text-gold fw-bold"><i class="fas fa-database me-1"></i>Total Reservations in System:</span>
-                    <span class="text-light ms-2">@Model.TotalReservations</span>
+                    <span class="text-gold fw-bold"><i class="fas fa-database me-1"></i>Dataset:</span>
+                    <span class="text-light ms-2">@Model.DataSize records</span>
+                    <span class="text-muted mx-2">|</span>
+                    <span class="text-muted small">Total in system: @Model.TotalReservations</span>
+                    <span class="badge bg-info ms-2">Avg of @Model.RunCount runs</span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <span class="text-gold fw-bold"><i class="fas fa-sliders-h me-1"></i>Test Data Size:</span>
-                    <form method="get" class="d-flex gap-2">
-                        <select name="dataSize" class="form-select form-select-sm" style="width: 120px;" onchange="this.form.submit()">
-                            <option value="10" selected="@(Model.DataSize == 10)">10 records</option>
-                            <option value="50" selected="@(Model.DataSize == 50)">50 records</option>
-                            <option value="100" selected="@(Model.DataSize == 100)">100 records</option>
-                            <option value="500" selected="@(Model.DataSize == 500)">500 records</option>
-                            <option value="1000" selected="@(Model.DataSize == 1000)">1000 records</option>
-                        </select>
+                    <form method="get" class="d-flex gap-2 align-items-center">
+                        <input list="dataSizes" name="dataSize" type="number" min="1" class="form-control form-control-sm" style="width: 200px" value="@Model.DataSize" onchange="this.form.submit()" placeholder="Enter size or select...">
+                        <datalist id="dataSizes">
+                            <option value="100">Small: 100 records</option>
+                            <option value="500">Medium: 500 records</option>
+                            <option value="1000">Large: 1000 records</option>
+                        </datalist>
                     </form>
-                    <button class="btn btn-sm btn-danger" onclick="runSortTest(@Model.DataSize)">
-                        <i class="fas fa-sort me-1"></i>Run Sort Test
+                    <button class="btn btn-sm btn-primary" onclick="runSortTest(@Model.DataSize)">
+                        <i class="fas fa-sort me-1"></i>Sort
                     </button>
                     <button class="btn btn-sm btn-info" onclick="runSearchTest(@Model.DataSize)">
-                        <i class="fas fa-search me-1"></i>Run Search Test
+                        <i class="fas fa-search me-1"></i>Search
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="runQueueTest(@Model.DataSize)">
+                        <i class="fas fa-layer-group me-1"></i>Queue
+                    </button>
+                    <button class="btn btn-sm btn-secondary" onclick="runAllocationTest(@Model.DataSize)">
+                        <i class="fas fa-bed me-1"></i>Allocation
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="runCancelTest(@Model.DataSize)">
+                        <i class="fas fa-times-circle me-1"></i>Cancel
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="runAllTests(@Model.DataSize)">
+                        <i class="fas fa-play-circle me-1"></i>Run All
                     </button>
                 </div>
             </div>
@@ -100,8 +69,8 @@
                             <thead>
                                 <tr>
                                     <th style="width: 22%;">Operation</th>
-                                    <th style="width: 39%;" class="text-danger">Baseline Approach</th>
-                                    <th style="width: 39%;" class="text-success">Optimized Approach</th>
+                                    <th style="width: 39%;" class="text-danger">Baseline</th>
+                                    <th style="width: 39%;" class="text-success">Optimized</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -150,7 +119,7 @@
         <div class="col-12 col-lg-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Sort Performance — Bubble Sort vs Quick Sort</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Sort Performance — Bubble Sort vs Quick Sort <span class="badge bg-info ms-2">Avg @Model.RunCount runs</span></h5>
                 </div>
                 <div class="card-body">
                     <div id="sortChart"></div>
@@ -160,20 +129,53 @@
     </div>
 
     <div class="row g-3 g-md-4 mb-4">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-3">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search Performance — Linear vs HashTable/Binary</h5>
+                    <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search <span class="badge bg-info ms-2">Avg @Model.RunCount</span></h5>
                 </div>
                 <div class="card-body">
                     <div id="searchChart"></div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-3">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-table me-2"></i>Complexity Comparison Summary</h5>
+                    <h5 class="mb-0"><i class="fas fa-layer-group me-2"></i>Queue <span class="badge bg-info ms-2">Avg @Model.RunCount</span></h5>
+                </div>
+                <div class="card-body">
+                    <div id="queueChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bed me-2"></i>Allocation <span class="badge bg-info ms-2">Avg @Model.RunCount</span></h5>
+                </div>
+                <div class="card-body">
+                    <div id="allocationChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-times-circle me-2"></i>Cancel/Reassign <span class="badge bg-info ms-2">Avg @Model.RunCount</span></h5>
+                </div>
+                <div class="card-body">
+                    <div id="cancelChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-12">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-table me-2"></i>Complexity Comparison</h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -181,8 +183,8 @@
                             <thead>
                                 <tr>
                                     <th>Operation</th>
-                                    <th class="text-danger">Baseline Complexity</th>
-                                    <th class="text-success">Optimized Complexity</th>
+                                    <th class="text-danger">Baseline</th>
+                                    <th class="text-success">Optimized</th>
                                     <th>Improvement</th>
                                 </tr>
                             </thead>
@@ -200,12 +202,6 @@
                                     <td><span class="badge bg-info">Structured</span></td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Insert (Regular)</strong></td>
-                                    <td><span class="text-danger">O(1) append</span></td>
-                                    <td><span class="text-success">O(1) FIFO</span></td>
-                                    <td><span class="badge bg-secondary">Same</span></td>
-                                </tr>
-                                <tr>
                                     <td><strong>Delete / Update</strong></td>
                                     <td><span class="text-danger">O(n) linear scan</span></td>
                                     <td><span class="text-success">O(1) + O(log n) heap</span></td>
@@ -213,14 +209,14 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Room Allocation</strong></td>
-                                    <td><span class="text-danger">O(n²) manual</span></td>
-                                    <td><span class="text-success">O(n) greedy</span></td>
-                                    <td><span class="badge bg-success">Automated</span></td>
+                                    <td><span class="text-danger">O(n\u00D7m) sequential</span></td>
+                                    <td><span class="text-success">O(n\u00D7m) greedy (better quality)</span></td>
+                                    <td><span class="badge bg-info">Quality improved</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Sorting</strong></td>
-                                    <td><span class="text-danger">O(n²)</span></td>
-                                    <td><span class="text-success">O(n log n)</span></td>
+                                    <td><span class="text-danger">O(n\u00B2)</span></td>
+                                    <td><span class="text-success">O(n log n) avg</span></td>
                                     <td><span class="badge bg-success">Efficient</span></td>
                                 </tr>
                                 <tr>
@@ -239,7 +235,7 @@
 
     <div class="card mb-4">
         <div class="card-header">
-            <h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Empirical Evaluation Results — @Model.DataSize Records</h5>
+            <h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Empirical Evaluation — @Model.DataSize Records <span class="badge bg-info ms-2">Avg of @Model.RunCount runs</span></h5>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -259,17 +255,17 @@
                             <td><strong>Sort Execution Time</strong></td>
                             <td><span class="text-danger">@Model.BaselineSortTimeMs.ToString("N3") ms</span></td>
                             <td><span class="text-success">@Model.OptimizedSortTimeMs.ToString("N3") ms</span></td>
-                            <td><span class="badge bg-success">@Model.SortImprovementPercent.ToString("N2")%</span></td>
-                            <td>O(n²)</td>
-                            <td>O(n log n)</td>
+                            <td><span class="badge @(Model.SortImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.SortImprovementPercent.ToString("N2")%</span></td>
+                            <td>O(n\u00B2)</td>
+                            <td>O(n log n) avg / O(n\u00B2) worst</td>
                         </tr>
                         <tr>
                             <td><strong>Sort Comparisons</strong></td>
                             <td><span class="text-danger">@Model.BaselineSortComparisons.ToString("N0")</span></td>
                             <td><span class="text-success">@Model.OptimizedSortComparisons.ToString("N0")</span></td>
                             <td><span class="badge bg-success">@((Model.BaselineSortComparisons > 0 ? (Model.BaselineSortComparisons - Model.OptimizedSortComparisons) * 100 / Model.BaselineSortComparisons : 0).ToString("N0"))%</span></td>
-                            <td rowspan="3">O(n²)</td>
-                            <td rowspan="3">O(n log n)</td>
+                            <td rowspan="2">O(n\u00B2)</td>
+                            <td rowspan="2">O(n log n)</td>
                         </tr>
                         <tr>
                             <td><strong>Sort Swaps</strong></td>
@@ -281,99 +277,136 @@
                             <td><strong>Search Time (100 lookups)</strong></td>
                             <td><span class="text-danger">@Model.BaselineSearchTimeMs.ToString("N3") ms</span></td>
                             <td><span class="text-success">@Model.OptimizedSearchTimeMs.ToString("N3") ms</span></td>
-                            <td><span class="badge bg-success">@Model.SearchImprovementPercent.ToString("N2")%</span></td>
+                            <td><span class="badge @(Model.SearchImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.SearchImprovementPercent.ToString("N2")%</span></td>
+                            <td>O(n)</td>
+                            <td>O(1) avg / O(log n)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Queue Insert Time</strong></td>
+                            <td><span class="text-danger">@Model.BaselineQueueInsertMs.ToString("N3") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedQueueInsertMs.ToString("N3") ms</span></td>
+                            <td><span class="badge @(Model.QueueInsertImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.QueueInsertImprovementPercent.ToString("N2")%</span></td>
+                            <td>O(1)</td>
+                            <td>O(log n)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Queue Extract Time</strong></td>
+                            <td><span class="text-danger">@Model.BaselineQueueExtractMs.ToString("N3") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedQueueExtractMs.ToString("N3") ms</span></td>
+                            <td><span class="badge @(Model.QueueExtractImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.QueueExtractImprovementPercent.ToString("N2")%</span></td>
+                            <td>O(1)</td>
+                            <td>O(log n)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Room Allocation Time</strong></td>
+                            <td><span class="text-danger">@Model.BaselineAllocationMs.ToString("N3") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedAllocationMs.ToString("N3") ms</span></td>
+                            <td><span class="badge @(Model.AllocationImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.AllocationImprovementPercent.ToString("N2")%</span></td>
+                            <td>O(n\u00D7m)</td>
+                            <td>O(n\u00D7m)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cancel + Reassign Time</strong></td>
+                            <td><span class="text-danger">@Model.BaselineCancelMs.ToString("N3") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedCancelMs.ToString("N3") ms</span></td>
+                            <td><span class="badge @(Model.CancelImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.CancelImprovementPercent.ToString("N2")%</span></td>
+                            <td>O(n) search + O(n) queue rebuild</td>
+                            <td>O(1) lookup + O(log n) heap remove</td>
+                        </tr>
+                        <tr class="table-active fw-bold">
+                            <td><strong>TOTAL (all operations)</strong></td>
+                            <td><span class="text-danger">@Model.BaselineTotalMs.ToString("N3") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedTotalMs.ToString("N3") ms</span></td>
+                            <td><span class="badge @(Model.OverallImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.OverallImprovementPercent.ToString("N2")%</span></td>
+                            <td colspan="2"><span class="text-muted">Weighted aggregate across all @Model.RunCount-run benchmarks</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
-    <div class="row g-3 g-md-4 mb-4">
-        <div class="col-md-4">
-            <div class="stat-card h-100">
-                <div class="stat-card-left">
-                    <div class="stat-icon"><i class="fas fa-clock text-danger"></i></div>
-                    <p class="stat-label">Baseline Sort Time</p>
-                </div>
-                <div class="stat-card-right">
-                    <h3 class="stat-number text-danger">@Model.BaselineSortTimeMs.ToString("N2")</h3>
-                    <small class="text-muted">ms (Bubble Sort)</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card h-100">
-                <div class="stat-card-left">
-                    <div class="stat-icon"><i class="fas fa-clock text-success"></i></div>
-                    <p class="stat-label">Optimized Sort Time</p>
-                </div>
-                <div class="stat-card-right">
-                    <h3 class="stat-number text-success">@Model.OptimizedSortTimeMs.ToString("N2")</h3>
-                    <small class="text-muted">ms (Quick Sort)</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card h-100">
-                <div class="stat-card-left">
-                    <div class="stat-icon"><i class="fas fa-chart-line text-gold"></i></div>
-                    <p class="stat-label">Sort Improvement</p>
-                </div>
-                <div class="stat-card-right">
-                    <h3 class="stat-number text-gold">@Model.SortImprovementPercent.ToString("N2")%</h3>
-                    <small class="text-muted">faster than baseline</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 <script>
     var sortOptions = {
         series: [
-            {
-                name: 'Baseline (Bubble Sort O(n\u00B2))',
-                data: [@Model.BaselineSortTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
-            },
-            {
-                name: 'Optimized (Quick Sort O(n log n))',
-                data: [@Model.OptimizedSortTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
-            }
+            { name: 'Baseline (Bubble Sort O(n\u00B2))', data: [@Model.BaselineSortTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] },
+            { name: 'Optimized (Quick Sort O(n log n))', data: [@Model.OptimizedSortTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] }
         ],
-        chart: { type: 'bar', height: 300, toolbar: { show: false }, background: 'transparent' },
+        chart: { type: 'bar', height: 260, toolbar: { show: false }, background: 'transparent' },
         plotOptions: { bar: { horizontal: false, columnWidth: '40%', endingShape: 'rounded' } },
         colors: ['#dc3545', '#28a745'],
-        xaxis: { categories: ['Sort @Model.DataSize Records'], labels: { style: { colors: '#fff' } } },
-        yaxis: { title: { text: 'Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
+        xaxis: { categories: ['Sort @Model.DataSize Records (Avg @Model.RunCount runs)'], labels: { style: { colors: '#fff' } } },
+        yaxis: { title: { text: 'Avg Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
         grid: { borderColor: 'rgba(255,255,255,0.1)' },
         dataLabels: { enabled: true, formatter: function(v) { return v.toFixed(2) + ' ms'; }, style: { colors: ['#fff'] } },
-        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(3) + ' ms'; } } }
+        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(3) + ' ms (avg of ' + @Model.RunCount + ' runs)'; } } }
     };
     new ApexCharts(document.querySelector("#sortChart"), sortOptions).render();
 
     var searchOptions = {
         series: [
-            {
-                name: 'Baseline (Linear Search O(n))',
-                data: [@Model.BaselineSearchTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
-            },
-            {
-                name: 'Optimized (HashTable O(1) + Binary O(log n))',
-                data: [@Model.OptimizedSearchTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)]
-            }
+            { name: 'Baseline (Linear Search O(n))', data: [@Model.BaselineSearchTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] },
+            { name: 'Optimized (HashTable O(1))', data: [@Model.OptimizedSearchTimeMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] }
         ],
-        chart: { type: 'bar', height: 300, toolbar: { show: false }, background: 'transparent' },
+        chart: { type: 'bar', height: 260, toolbar: { show: false }, background: 'transparent' },
         plotOptions: { bar: { horizontal: false, columnWidth: '40%', endingShape: 'rounded' } },
         colors: ['#dc3545', '#17a2b8'],
-        xaxis: { categories: ['100 Lookups on @Model.DataSize Records'], labels: { style: { colors: '#fff' } } },
-        yaxis: { title: { text: 'Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
+        xaxis: { categories: ['100 Lookups (Avg @Model.RunCount runs)'], labels: { style: { colors: '#fff' } } },
+        yaxis: { title: { text: 'Avg Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
         grid: { borderColor: 'rgba(255,255,255,0.1)' },
         dataLabels: { enabled: true, formatter: function(v) { return v.toFixed(3) + ' ms'; }, style: { colors: ['#fff'] } },
-        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(4) + ' ms'; } } }
+        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(4) + ' ms (avg of ' + @Model.RunCount + ' runs)'; } } }
     };
     new ApexCharts(document.querySelector("#searchChart"), searchOptions).render();
+
+    var queueOptions = {
+        series: [
+            { name: 'Baseline (SingleQueue O(1))', data: [@Model.BaselineQueueInsertMs.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.BaselineQueueExtractMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] },
+            { name: 'Optimized (PriorityQueue O(log n))', data: [@Model.OptimizedQueueInsertMs.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.OptimizedQueueExtractMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] }
+        ],
+        chart: { type: 'bar', height: 260, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '40%', endingShape: 'rounded' } },
+        colors: ['#dc3545', '#ffc107'],
+        xaxis: { categories: ['Insert @Model.DataSize', 'Extract @Model.DataSize'], labels: { style: { colors: '#fff' } } },
+        yaxis: { title: { text: 'Avg Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
+        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+        dataLabels: { enabled: true, formatter: function(v) { return v.toFixed(3) + ' ms'; }, style: { colors: ['#fff'] } },
+        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(4) + ' ms (avg of ' + @Model.RunCount + ' runs)'; } } }
+    };
+    new ApexCharts(document.querySelector("#queueChart"), queueOptions).render();
+
+    var allocationOptions = {
+        series: [
+            { name: 'Baseline (Sequential O(n))', data: [@Model.BaselineAllocationMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] },
+            { name: 'Optimized (Greedy O(n))', data: [@Model.OptimizedAllocationMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] }
+        ],
+        chart: { type: 'bar', height: 260, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '40%', endingShape: 'rounded' } },
+        colors: ['#dc3545', '#6f42c1'],
+        xaxis: { categories: ['Allocate @Model.DataSize Reservations (Avg @Model.RunCount runs)'], labels: { style: { colors: '#fff' } } },
+        yaxis: { title: { text: 'Avg Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
+        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+        dataLabels: { enabled: true, formatter: function(v) { return v.toFixed(2) + ' ms'; }, style: { colors: ['#fff'] } },
+        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(3) + ' ms (avg of ' + @Model.RunCount + ' runs)'; } } }
+    };
+    new ApexCharts(document.querySelector("#allocationChart"), allocationOptions).render();
+
+    var cancelOptions = {
+        series: [
+            { name: 'Baseline (Linear + Queue rebuild)', data: [@Model.BaselineCancelMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] },
+            { name: 'Optimized (Hash + Heap + Greedy)', data: [@Model.OptimizedCancelMs.ToString(System.Globalization.CultureInfo.InvariantCulture)] }
+        ],
+        chart: { type: 'bar', height: 260, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '40%', endingShape: 'rounded' } },
+        colors: ['#dc3545', '#20c997'],
+        xaxis: { categories: ['Cancel + Reassign @Model.DataSize (Avg @Model.RunCount runs)'], labels: { style: { colors: '#fff' } } },
+        yaxis: { title: { text: 'Avg Time (ms)', style: { color: '#fff' } }, labels: { style: { colors: '#fff' } } },
+        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+        dataLabels: { enabled: true, formatter: function(v) { return v.toFixed(2) + ' ms'; }, style: { colors: ['#fff'] } },
+        tooltip: { theme: 'dark', y: { formatter: function(v) { return v.toFixed(3) + ' ms (avg of ' + @Model.RunCount + ' runs)'; } } }
+    };
+    new ApexCharts(document.querySelector("#cancelChart"), cancelOptions).render();
 
     function runSortTest(dataSize) {
         var btn = event.target;
@@ -383,14 +416,15 @@
         fetch('/Baseline/RunSortTest?dataSize=' + dataSize)
             .then(function(r) { return r.json(); })
             .then(function(d) {
-                alert('Sort Test (' + d.dataSize + ' records):\n' +
+                alert('Sort Test (' + d.dataSize + ' records, avg of ' + d.runs + ' runs):\n' +
                       'Baseline (Bubble Sort):  ' + d.baselineMs + ' ms\n' +
                       'Optimized (Quick Sort): ' + d.optimizedMs + ' ms\n' +
+                      'Comparisons (base/opt):  ' + d.baselineComparisons + ' / ' + d.optimizedComparisons + '\n' +
                       'Improvement:            ' + d.improvementPercent + '%');
                 location.reload();
             })
-            .catch(function() { alert('Test failed. Ensure there are enough reservation records.'); })
-            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sort me-1"></i>Run Sort Test'; });
+            .catch(function() { alert('Test failed.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sort me-1"></i>Sort'; });
     }
 
     function runSearchTest(dataSize) {
@@ -401,14 +435,89 @@
         fetch('/Baseline/RunSearchTest?dataSize=' + dataSize)
             .then(function(r) { return r.json(); })
             .then(function(d) {
-                alert('Search Test (' + d.dataSize + ' records, 100 lookups):\n' +
+                alert('Search Test (' + d.dataSize + ' records, ' + d.lookups + ' lookups, avg of ' + d.runs + ' runs):\n' +
                       'Baseline (Linear):  ' + d.baselineMs + ' ms\n' +
                       'Optimized (Hash):   ' + d.optimizedMs + ' ms\n' +
                       'Improvement:        ' + d.improvementPercent + '%');
                 location.reload();
             })
-            .catch(function() { alert('Test failed. Ensure there are enough reservation records.'); })
-            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-search me-1"></i>Run Search Test'; });
+            .catch(function() { alert('Test failed.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-search me-1"></i>Search'; });
+    }
+
+    function runQueueTest(dataSize) {
+        var btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Testing queues...';
+
+        fetch('/Baseline/RunQueueTest?dataSize=' + dataSize)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                alert('Queue Test (' + d.dataSize + ' records, avg of ' + d.runs + ' runs):\n' +
+                      'Insert — Baseline: ' + d.baselineInsertMs + ' ms, Optimized: ' + d.optimizedInsertMs + ' ms (' + d.insertImprovement + '%)\n' +
+                      'Extract— Baseline: ' + d.baselineExtractMs + ' ms, Optimized: ' + d.optimizedExtractMs + ' ms (' + d.extractImprovement + '%)');
+                location.reload();
+            })
+            .catch(function() { alert('Test failed.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-layer-group me-1"></i>Queue'; });
+    }
+
+    function runAllocationTest(dataSize) {
+        var btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Testing allocation...';
+
+        fetch('/Baseline/RunAllocationTest?dataSize=' + dataSize)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                alert('Allocation Test (' + d.dataSize + ' records, avg of ' + d.runs + ' runs):\n' +
+                      'Baseline (Sequential): ' + d.baselineMs + ' ms\n' +
+                      'Optimized (Greedy):    ' + d.optimizedMs + ' ms\n' +
+                      'Improvement:          ' + d.improvementPercent + '%');
+                location.reload();
+            })
+            .catch(function() { alert('Test failed.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-bed me-1"></i>Allocation'; });
+    }
+
+    function runCancelTest(dataSize) {
+        var btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Testing cancel...';
+
+        fetch('/Baseline/RunCancelTest?dataSize=' + dataSize)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                alert('Cancel+Reassign Test (' + d.dataSize + ' records, avg of ' + d.runs + ' runs):\n' +
+                      'Baseline (Linear+QueueRebuild): ' + d.baselineMs + ' ms\n' +
+                      'Optimized (Hash+Heap+Greedy):  ' + d.optimizedMs + ' ms\n' +
+                      'Improvement:                   ' + d.improvementPercent + '%');
+                location.reload();
+            })
+            .catch(function() { alert('Test failed.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-times-circle me-1"></i>Cancel'; });
+    }
+
+    function runAllTests(dataSize) {
+        var btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Running all (avg ' + @Model.RunCount + ')...';
+
+        fetch('/Baseline/RunAllTests?dataSize=' + dataSize)
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                alert('All Tests (' + d.dataSize + ' records, avg of ' + d.runs + ' runs):\n\n' +
+                      'Sort    — Base: ' + d.sort.baselineMs + ' ms, Opt: ' + d.sort.optimizedMs + ' ms (' + d.sort.improvementPercent + '%)\n' +
+                      'Search  — Base: ' + d.search.baselineMs + ' ms, Opt: ' + d.search.optimizedMs + ' ms (' + d.search.improvementPercent + '%)\n' +
+                      'Queue I — Base: ' + d.queue.insert.baselineMs + ' ms, Opt: ' + d.queue.insert.optimizedMs + ' ms (' + d.queue.insert.improvementPercent + '%)\n' +
+                      'Queue E — Base: ' + d.queue.extract.baselineMs + ' ms, Opt: ' + d.queue.extract.optimizedMs + ' ms (' + d.queue.extract.improvementPercent + '%)\n' +
+                      'Alloc   — Base: ' + d.allocation.baselineMs + ' ms, Opt: ' + d.allocation.optimizedMs + ' ms (' + d.allocation.improvementPercent + '%)\n' +
+                      'Cancel  — Base: ' + d.cancellation.baselineMs + ' ms, Opt: ' + d.cancellation.optimizedMs + ' ms (' + d.cancellation.improvementPercent + '%)\n\n' +
+                      'TOTAL   — Base: ' + d.totals.baselineMs + ' ms, Opt: ' + d.totals.optimizedMs + ' ms (' + d.totals.improvementPercent + '%)');
+                location.reload();
+            })
+            .catch(function() { alert('One or more tests failed.'); })
+            .finally(function() { btn.disabled = false; btn.innerHTML = '<i class="fas fa-play-circle me-1"></i>Run All'; });
     }
 </script>
 
@@ -418,24 +527,7 @@
     .stat-card .stat-label { font-size: 0.75rem; }
     table th.text-danger { color: #dc3545; }
     table th.text-success { color: #28a745; }
-    .step-card {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        border: 1px solid rgba(212, 168, 83, 0.2);
-        border-radius: 12px;
-        padding: 1.25rem;
-        text-align: center;
-        transition: all 0.3s;
-    }
-    .step-card:hover { border-color: #d4a853; transform: translateY(-2px); }
-    .step-number {
-        width: 40px; height: 40px;
-        background: linear-gradient(135deg, #d4a853, #b8922e);
-        color: #000; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 1.1rem;
-        margin: 0 auto 0.75rem;
-    }
-    .step-card h6 { color: #d4a853; margin-bottom: 0.5rem; }
+    code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 3px; }
     @@media (min-width: 768px) {
         .stat-card .stat-icon { font-size: 2rem; }
         .stat-card .stat-number { font-size: 2rem; }
