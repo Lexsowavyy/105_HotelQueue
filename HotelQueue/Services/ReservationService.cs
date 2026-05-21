@@ -121,11 +121,14 @@ public class ReservationService
 
     public bool ConfirmReservation(string reservationId)
     {
-        var reservation = _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .FirstOrDefault(r => r.ReservationId == reservationId);
-        
+        // Primary path: resolve from in-memory hash table (O(1))
+        EnsureInitialized();
+        var reservation = _reservationHashTable.Get(reservationId)
+            ?? _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Room)
+                .FirstOrDefault(r => r.ReservationId == reservationId);
+
         if (reservation == null)
             return false;
 
@@ -151,11 +154,14 @@ public class ReservationService
 
     public bool CancelReservation(string reservationId)
     {
-        var reservation = _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .FirstOrDefault(r => r.ReservationId == reservationId);
-        
+        // Primary path: resolve from in-memory hash table (O(1))
+        EnsureInitialized();
+        var reservation = _reservationHashTable.Get(reservationId)
+            ?? _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Room)
+                .FirstOrDefault(r => r.ReservationId == reservationId);
+
         if (reservation == null)
             return false;
 
@@ -211,16 +217,22 @@ public class ReservationService
 
     public bool ArchiveReservation(string reservationId)
     {
-        var reservation = _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .FirstOrDefault(r => r.ReservationId == reservationId);
-        
+        // Primary path: resolve from in-memory hash table (O(1))
+        EnsureInitialized();
+        var reservation = _reservationHashTable.Get(reservationId)
+            ?? _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Room)
+                .FirstOrDefault(r => r.ReservationId == reservationId);
+
         if (reservation == null)
             return false;
 
         reservation.Status = ReservationStatus.Archived;
         _context.SaveChanges();
+
+        // Keep hash table in sync
+        _reservationHashTable.Update(reservation);
 
         _notificationService.SendArchive(reservation);
 
@@ -230,11 +242,14 @@ public class ReservationService
     public bool UpdateReservation(string reservationId, string customerName, string customerEmail, 
         string customerPhone, CustomerType customerType, int roomId, DateTime checkIn, DateTime checkOut)
     {
-        var reservation = _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .FirstOrDefault(r => r.ReservationId == reservationId);
-        
+        // Primary path: resolve from in-memory hash table (O(1))
+        EnsureInitialized();
+        var reservation = _reservationHashTable.Get(reservationId)
+            ?? _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Room)
+                .FirstOrDefault(r => r.ReservationId == reservationId);
+
         if (reservation == null)
             return false;
 
@@ -262,18 +277,25 @@ public class ReservationService
 
     public bool RestoreReservation(string reservationId)
     {
-        var reservation = _context.Reservations
-            .Include(r => r.Customer)
-            .Include(r => r.Room)
-            .FirstOrDefault(r => r.ReservationId == reservationId);
-        
+        // Primary path: resolve from in-memory hash table (O(1))
+        EnsureInitialized();
+        var reservation = _reservationHashTable.Get(reservationId)
+            ?? _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Room)
+                .FirstOrDefault(r => r.ReservationId == reservationId);
+
         if (reservation == null)
             return false;
 
         reservation.Status = ReservationStatus.Pending;
         _context.SaveChanges();
 
-        _reservationHashTable.Add(reservation);
+        // Re-add to hash table (handles both new and existing entries)
+        if (!_reservationHashTable.Contains(reservationId))
+            _reservationHashTable.Add(reservation);
+        else
+            _reservationHashTable.Update(reservation);
 
         if (reservation.CustomerType == CustomerType.VIP)
         {

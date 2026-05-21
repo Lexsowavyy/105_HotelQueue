@@ -191,38 +191,38 @@
                             <tbody>
                                 <tr>
                                     <td><strong>Search / Lookup</strong></td>
-                                    <td><span class="text-danger">O(n)</span></td>
-                                    <td><span class="text-success">O(1) avg / O(log n)</span></td>
+                                    <td><span class="text-danger">O(n) - Linear Scan (EF LINQ)</span></td>
+                                    <td><span class="text-success">O(1) avg - Custom In-Memory HashTable*</span></td>
                                     <td><span class="badge bg-success">Reduced</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Insert (VIP)</strong></td>
                                     <td><span class="text-danger">O(1) append</span></td>
-                                    <td><span class="text-success">O(log n) heap</span></td>
-                                    <td><span class="badge bg-info">Structured</span></td>
+                                    <td><span class="text-success">O(log n) Min-Heap</span></td>
+                                    <td><span class="badge bg-info">Priority-structured</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Delete / Update</strong></td>
-                                    <td><span class="text-danger">O(n) linear scan</span></td>
-                                    <td><span class="text-success">O(1) + O(log n) heap</span></td>
-                                    <td><span class="badge bg-success">Faster</span></td>
+                                    <td><span class="text-danger">O(n) linear scan + EF</span></td>
+                                    <td><span class="text-success">O(1) hash lookup + O(log n) heap; EF Core for DB write†</span></td>
+                                    <td><span class="badge bg-success">Faster lookup</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Room Allocation</strong></td>
-                                    <td><span class="text-danger">O(n\u00D7m) sequential</span></td>
-                                    <td><span class="text-success">O(n\u00D7m) greedy (better quality)</span></td>
-                                    <td><span class="badge bg-info">Quality improved</span></td>
+                                    <td><span class="text-danger">O(n&times;m) sequential, no priority</span></td>
+                                    <td><span class="text-success">O(n&times;m) greedy, VIP-first (same class)</span></td>
+                                    <td><span class="badge bg-warning text-dark">Quality improved, not asymptotic</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Sorting</strong></td>
-                                    <td><span class="text-danger">O(n\u00B2)</span></td>
-                                    <td><span class="text-success">O(n log n) avg</span></td>
+                                    <td><span class="text-danger">O(n&sup2;) Bubble Sort</span></td>
+                                    <td><span class="text-success">O(n log n) avg Quick Sort</span></td>
                                     <td><span class="badge bg-success">Efficient</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Waitlist Mgmt</strong></td>
                                     <td><span class="text-danger">O(n) manual</span></td>
-                                    <td><span class="text-success">O(log n) heap / O(1) FIFO</span></td>
+                                    <td><span class="text-success">O(log n) heap (VIP) / O(1) FIFO (Regular)</span></td>
                                     <td><span class="badge bg-success">Automated</span></td>
                                 </tr>
                             </tbody>
@@ -230,6 +230,20 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Architecture Notes &amp; Complexity Clarifications</h5>
+        </div>
+        <div class="card-body">
+            <ul class="mb-0 text-muted small">
+                <li><strong>*&nbsp;Hash Table O(1) lookup</strong> applies to the <em>in-memory</em> custom <code>ReservationHashTable</code> (backed by <code>Dictionary&lt;string, Reservation&gt;</code>). EF Core is used as the persistence layer; write operations (confirm, cancel, update, archive) still commit via <code>_context.SaveChanges()</code> after the in-memory lookup.</li>
+                <li><strong>†&nbsp;Delete / Update path:</strong> The optimized system resolves the reservation via O(1) hash lookup <em>first</em>, then persists the change through EF Core. The baseline always performs an O(n) full-table LINQ scan. The net lookup is faster; persistence overhead is the same.</li>
+                <li><strong>Room Allocation:</strong> Both sequential and greedy allocators are O(n&times;m) where n = reservations and m = rooms. The improvement is <em>automation</em> (VIP-first priority, cheapest suitable room) and <em>decision quality</em>, not asymptotic complexity. Do not claim a time-complexity reduction for this operation.</li>
+                <li><strong>Binary Search</strong> (O(log n)) is used for date-range queries on sorted reservation lists. Reservation-by-ID lookup uses the hash table O(1) path, not binary search.</li>
+            </ul>
         </div>
     </div>
 
@@ -253,8 +267,8 @@
                     <tbody>
                         <tr>
                             <td><strong>Sort Execution Time</strong></td>
-                            <td><span class="text-danger">@Model.BaselineSortTimeMs.ToString("N3") ms</span></td>
-                            <td><span class="text-success">@Model.OptimizedSortTimeMs.ToString("N3") ms</span></td>
+                            <td><span class="text-danger">@Model.BaselineSortTimeMs.ToString("N4") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedSortTimeMs.ToString("N4") ms</span></td>
                             <td><span class="badge @(Model.SortImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.SortImprovementPercent.ToString("N2")%</span></td>
                             <td>O(n\u00B2)</td>
                             <td>O(n log n) avg / O(n\u00B2) worst</td>
@@ -275,50 +289,50 @@
                         </tr>
                         <tr>
                             <td><strong>Search Time (100 lookups)</strong></td>
-                            <td><span class="text-danger">@Model.BaselineSearchTimeMs.ToString("N3") ms</span></td>
-                            <td><span class="text-success">@Model.OptimizedSearchTimeMs.ToString("N3") ms</span></td>
+                            <td><span class="text-danger">@Model.BaselineSearchTimeMs.ToString("N4") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedSearchTimeMs.ToString("N4") ms</span></td>
                             <td><span class="badge @(Model.SearchImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.SearchImprovementPercent.ToString("N2")%</span></td>
-                            <td>O(n)</td>
-                            <td>O(1) avg / O(log n)</td>
+                            <td>O(n) - Linear Search</td>
+                            <td>O(1) avg - In-Memory HashTable (custom DSA)*</td>
                         </tr>
                         <tr>
                             <td><strong>Queue Insert Time</strong></td>
-                            <td><span class="text-danger">@Model.BaselineQueueInsertMs.ToString("N3") ms</span></td>
-                            <td><span class="text-success">@Model.OptimizedQueueInsertMs.ToString("N3") ms</span></td>
+                            <td><span class="text-danger">@Model.BaselineQueueInsertMs.ToString("N4") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedQueueInsertMs.ToString("N4") ms</span></td>
                             <td><span class="badge @(Model.QueueInsertImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.QueueInsertImprovementPercent.ToString("N2")%</span></td>
                             <td>O(1)</td>
                             <td>O(log n)</td>
                         </tr>
                         <tr>
                             <td><strong>Queue Extract Time</strong></td>
-                            <td><span class="text-danger">@Model.BaselineQueueExtractMs.ToString("N3") ms</span></td>
-                            <td><span class="text-success">@Model.OptimizedQueueExtractMs.ToString("N3") ms</span></td>
+                            <td><span class="text-danger">@Model.BaselineQueueExtractMs.ToString("N4") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedQueueExtractMs.ToString("N4") ms</span></td>
                             <td><span class="badge @(Model.QueueExtractImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.QueueExtractImprovementPercent.ToString("N2")%</span></td>
                             <td>O(1)</td>
                             <td>O(log n)</td>
                         </tr>
                         <tr>
                             <td><strong>Room Allocation Time</strong></td>
-                            <td><span class="text-danger">@Model.BaselineAllocationMs.ToString("N3") ms</span></td>
-                            <td><span class="text-success">@Model.OptimizedAllocationMs.ToString("N3") ms</span></td>
+                            <td><span class="text-danger">@Model.BaselineAllocationMs.ToString("N4") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedAllocationMs.ToString("N4") ms</span></td>
                             <td><span class="badge @(Model.AllocationImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.AllocationImprovementPercent.ToString("N2")%</span></td>
-                            <td>O(n\u00D7m)</td>
-                            <td>O(n\u00D7m)</td>
+                            <td>O(n&times;m) - Sequential</td>
+                            <td>O(n&times;m) - Greedy (same class, quality improved)†</td>
                         </tr>
                         <tr>
                             <td><strong>Cancel + Reassign Time</strong></td>
-                            <td><span class="text-danger">@Model.BaselineCancelMs.ToString("N3") ms</span></td>
-                            <td><span class="text-success">@Model.OptimizedCancelMs.ToString("N3") ms</span></td>
+                            <td><span class="text-danger">@Model.BaselineCancelMs.ToString("N4") ms</span></td>
+                            <td><span class="text-success">@Model.OptimizedCancelMs.ToString("N4") ms</span></td>
                             <td><span class="badge @(Model.CancelImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.CancelImprovementPercent.ToString("N2")%</span></td>
                             <td>O(n) search + O(n) queue rebuild</td>
                             <td>O(1) lookup + O(log n) heap remove</td>
                         </tr>
-                        <tr class="table-active fw-bold">
-                            <td><strong>TOTAL (all operations)</strong></td>
-                            <td><span class="text-danger">@Model.BaselineTotalMs.ToString("N3") ms</span></td>
-                            <td><span class="text-success">@Model.OptimizedTotalMs.ToString("N3") ms</span></td>
+                        <tr class="table-active fw-bold" style="color: #fff !important;">
+                            <td><strong class="text-white">TOTAL (all operations)</strong></td>
+                            <td><span class="text-danger fw-bold">@Model.BaselineTotalMs.ToString("N4") ms</span></td>
+                            <td><span class="text-success fw-bold">@Model.OptimizedTotalMs.ToString("N4") ms</span></td>
                             <td><span class="badge @(Model.OverallImprovementPercent >= 0 ? "bg-success" : "bg-warning text-dark")">@Model.OverallImprovementPercent.ToString("N2")%</span></td>
-                            <td colspan="2"><span class="text-muted">Weighted aggregate across all @Model.RunCount-run benchmarks</span></td>
+                            <td colspan="2"><span class="text-white fw-bold">Weighted aggregate across all @Model.RunCount-run benchmarks</span></td>
                         </tr>
                     </tbody>
                 </table>

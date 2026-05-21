@@ -59,7 +59,7 @@ public class Reservation
         CheckInDate = checkIn;
         CheckOutDate = checkOut;
         CustomerType = customerType;
-        Priority = customerType == CustomerType.VIP ? 1 : 0;
+        Priority = customerType == CustomerType.VIP ? 0 : 1;
         Status = ReservationStatus.Pending;
         CreatedAt = DateTime.Now;
     }

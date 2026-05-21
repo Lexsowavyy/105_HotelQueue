@@ -57,20 +57,20 @@ public class BaselineController : Controller
             BaselineCancelMs = result.BaselineCancelMs,
             OptimizedCancelMs = result.OptimizedCancelMs,
 
-            BaselineSearchComplexity = "O(n) - Linear Search",
-            OptimizedSearchComplexity = "O(1) avg - HashTable / O(log n) - Binary Search",
+            BaselineSearchComplexity = "O(n) - Linear Search through all records",
+            OptimizedSearchComplexity = "O(1) avg - In-memory HashTable (custom DSA); note: EF Core used for DB persistence",
             BaselineSortComplexity = "O(n\u00B2) - Bubble Sort",
             OptimizedSortComplexity = "O(n log n) average case, O(n\u00B2) worst case - Quick Sort",
             BaselineQueueType = "Single FIFO Queue - FCFS for ALL customers",
-            OptimizedQueueType = "PriorityQueue (Heap) for VIP + FIFOQueue for Regular",
-            BaselineAllocationType = "Sequential (O(n\u00D7m)) - First available room",
-            OptimizedAllocationType = "Greedy (O(n\u00D7m)) - Cheapest suitable, VIP first (better quality)",
-            BaselineLookupType = "Linear Scan O(n) - No indexing",
-            OptimizedLookupType = "HashTable (Dictionary-backed) O(1) avg + custom secondary indexes",
+            OptimizedQueueType = "PriorityQueue (Min-Heap) for VIP + FIFOQueue for Regular",
+            BaselineAllocationType = "Sequential (O(n\u00D7m)) - First available room, no priority",
+            OptimizedAllocationType = "Greedy (O(n\u00D7m)) - Cheapest suitable room, VIP-first priority (automation improvement, same asymptotic class)",
+            BaselineLookupType = "Linear Scan O(n) - LINQ/EF Core full table scan",
+            OptimizedLookupType = "In-memory HashTable O(1) avg (DSA layer); EF Core used for persistence writes",
             BaselineWaitlistType = "Manual staff intervention",
-            OptimizedWaitlistType = "Auto-promote via Queue + Heap operations",
-            BaselineCancellationType = "Manual reassignment",
-            OptimizedCancellationType = "Real-time auto reallocate + waitlist promote"
+            OptimizedWaitlistType = "Auto-promote via Priority Queue (VIP) + FIFO Queue (Regular)",
+            BaselineCancellationType = "Manual reassignment, O(n) scan + queue rebuild",
+            OptimizedCancellationType = "O(1) hash lookup + O(log n) heap remove + auto greedy reallocation"
         };
 
         return View(viewModel);
@@ -84,8 +84,8 @@ public class BaselineController : Controller
         {
             dataSize,
             runs = DefaultRuns,
-            baselineMs = Math.Round(result.BaselineSortMs, 3),
-            optimizedMs = Math.Round(result.OptimizedSortMs, 3),
+            baselineMs = Math.Round(result.BaselineSortMs, 4),
+            optimizedMs = Math.Round(result.OptimizedSortMs, 4),
             improvementPercent = result.SortImprovementPercent,
             baselineComparisons = result.BaselineSortComparisons,
             optimizedComparisons = result.OptimizedSortComparisons
@@ -101,8 +101,8 @@ public class BaselineController : Controller
             dataSize,
             runs = DefaultRuns,
             lookups = 100,
-            baselineMs = Math.Round(result.BaselineSearchMs, 3),
-            optimizedMs = Math.Round(result.OptimizedSearchMs, 3),
+            baselineMs = Math.Round(result.BaselineSearchMs, 4),
+            optimizedMs = Math.Round(result.OptimizedSearchMs, 4),
             improvementPercent = result.SearchImprovementPercent
         });
     }
@@ -115,10 +115,10 @@ public class BaselineController : Controller
         {
             dataSize,
             runs = DefaultRuns,
-            baselineInsertMs = Math.Round(result.BaselineQueueInsertMs, 3),
-            optimizedInsertMs = Math.Round(result.OptimizedQueueInsertMs, 3),
-            baselineExtractMs = Math.Round(result.BaselineQueueExtractMs, 3),
-            optimizedExtractMs = Math.Round(result.OptimizedQueueExtractMs, 3),
+            baselineInsertMs = Math.Round(result.BaselineQueueInsertMs, 4),
+            optimizedInsertMs = Math.Round(result.OptimizedQueueInsertMs, 4),
+            baselineExtractMs = Math.Round(result.BaselineQueueExtractMs, 4),
+            optimizedExtractMs = Math.Round(result.OptimizedQueueExtractMs, 4),
             insertImprovement = result.QueueInsertImprovementPercent,
             extractImprovement = result.QueueExtractImprovementPercent
         });
@@ -132,8 +132,8 @@ public class BaselineController : Controller
         {
             dataSize,
             runs = DefaultRuns,
-            baselineMs = Math.Round(result.BaselineAllocationMs, 3),
-            optimizedMs = Math.Round(result.OptimizedAllocationMs, 3),
+            baselineMs = Math.Round(result.BaselineAllocationMs, 4),
+            optimizedMs = Math.Round(result.OptimizedAllocationMs, 4),
             improvementPercent = result.AllocationImprovementPercent
         });
     }
@@ -146,8 +146,8 @@ public class BaselineController : Controller
         {
             dataSize,
             runs = DefaultRuns,
-            baselineMs = Math.Round(result.BaselineCancelMs, 3),
-            optimizedMs = Math.Round(result.OptimizedCancelMs, 3),
+            baselineMs = Math.Round(result.BaselineCancelMs, 4),
+            optimizedMs = Math.Round(result.OptimizedCancelMs, 4),
             improvementPercent = result.CancelImprovementPercent
         });
     }
@@ -162,47 +162,47 @@ public class BaselineController : Controller
             runs = DefaultRuns,
             sort = new
             {
-                baselineMs = Math.Round(result.BaselineSortMs, 3),
-                optimizedMs = Math.Round(result.OptimizedSortMs, 3),
+                baselineMs = Math.Round(result.BaselineSortMs, 4),
+                optimizedMs = Math.Round(result.OptimizedSortMs, 4),
                 improvementPercent = result.SortImprovementPercent
             },
             search = new
             {
-                baselineMs = Math.Round(result.BaselineSearchMs, 3),
-                optimizedMs = Math.Round(result.OptimizedSearchMs, 3),
+                baselineMs = Math.Round(result.BaselineSearchMs, 4),
+                optimizedMs = Math.Round(result.OptimizedSearchMs, 4),
                 improvementPercent = result.SearchImprovementPercent
             },
             queue = new
             {
                 insert = new
                 {
-                    baselineMs = Math.Round(result.BaselineQueueInsertMs, 3),
-                    optimizedMs = Math.Round(result.OptimizedQueueInsertMs, 3),
+                    baselineMs = Math.Round(result.BaselineQueueInsertMs, 4),
+                    optimizedMs = Math.Round(result.OptimizedQueueInsertMs, 4),
                     improvementPercent = result.QueueInsertImprovementPercent
                 },
                 extract = new
                 {
-                    baselineMs = Math.Round(result.BaselineQueueExtractMs, 3),
-                    optimizedMs = Math.Round(result.OptimizedQueueExtractMs, 3),
+                    baselineMs = Math.Round(result.BaselineQueueExtractMs, 4),
+                    optimizedMs = Math.Round(result.OptimizedQueueExtractMs, 4),
                     improvementPercent = result.QueueExtractImprovementPercent
                 }
             },
             allocation = new
             {
-                baselineMs = Math.Round(result.BaselineAllocationMs, 3),
-                optimizedMs = Math.Round(result.OptimizedAllocationMs, 3),
+                baselineMs = Math.Round(result.BaselineAllocationMs, 4),
+                optimizedMs = Math.Round(result.OptimizedAllocationMs, 4),
                 improvementPercent = result.AllocationImprovementPercent
             },
             cancellation = new
             {
-                baselineMs = Math.Round(result.BaselineCancelMs, 3),
-                optimizedMs = Math.Round(result.OptimizedCancelMs, 3),
+                baselineMs = Math.Round(result.BaselineCancelMs, 4),
+                optimizedMs = Math.Round(result.OptimizedCancelMs, 4),
                 improvementPercent = result.CancelImprovementPercent
             },
             totals = new
             {
-                baselineMs = Math.Round(result.BaselineTotalMs, 3),
-                optimizedMs = Math.Round(result.OptimizedTotalMs, 3),
+                baselineMs = Math.Round(result.BaselineTotalMs, 4),
+                optimizedMs = Math.Round(result.OptimizedTotalMs, 4),
                 improvementPercent = result.OverallImprovementPercent
             }
         });
@@ -259,8 +259,8 @@ public class BaselineController : Controller
                 runs = r.Runs,
                 sort = new
                 {
-                    baselineMs = Math.Round(r.BaselineSortMs, 3),
-                    optimizedMs = Math.Round(r.OptimizedSortMs, 3),
+                    baselineMs = Math.Round(r.BaselineSortMs, 4),
+                    optimizedMs = Math.Round(r.OptimizedSortMs, 4),
                     improvementPercent = r.SortImprovementPercent,
                     baselineComparisons = r.BaselineSortComparisons,
                     optimizedComparisons = r.OptimizedSortComparisons,
@@ -269,35 +269,35 @@ public class BaselineController : Controller
                 },
                 search = new
                 {
-                    baselineMs = Math.Round(r.BaselineSearchMs, 3),
-                    optimizedMs = Math.Round(r.OptimizedSearchMs, 3),
+                    baselineMs = Math.Round(r.BaselineSearchMs, 4),
+                    optimizedMs = Math.Round(r.OptimizedSearchMs, 4),
                     improvementPercent = r.SearchImprovementPercent
                 },
                 queue = new
                 {
                     insert = new
                     {
-                        baselineMs = Math.Round(r.BaselineQueueInsertMs, 3),
-                        optimizedMs = Math.Round(r.OptimizedQueueInsertMs, 3),
+                        baselineMs = Math.Round(r.BaselineQueueInsertMs, 4),
+                        optimizedMs = Math.Round(r.OptimizedQueueInsertMs, 4),
                         improvementPercent = r.QueueInsertImprovementPercent
                     },
                     extract = new
                     {
-                        baselineMs = Math.Round(r.BaselineQueueExtractMs, 3),
-                        optimizedMs = Math.Round(r.OptimizedQueueExtractMs, 3),
+                        baselineMs = Math.Round(r.BaselineQueueExtractMs, 4),
+                        optimizedMs = Math.Round(r.OptimizedQueueExtractMs, 4),
                         improvementPercent = r.QueueExtractImprovementPercent
                     }
                 },
                 allocation = new
                 {
-                    baselineMs = Math.Round(r.BaselineAllocationMs, 3),
-                    optimizedMs = Math.Round(r.OptimizedAllocationMs, 3),
+                    baselineMs = Math.Round(r.BaselineAllocationMs, 4),
+                    optimizedMs = Math.Round(r.OptimizedAllocationMs, 4),
                     improvementPercent = r.AllocationImprovementPercent
                 },
                 cancellation = new
                 {
-                    baselineMs = Math.Round(r.BaselineCancelMs, 3),
-                    optimizedMs = Math.Round(r.OptimizedCancelMs, 3),
+                    baselineMs = Math.Round(r.BaselineCancelMs, 4),
+                    optimizedMs = Math.Round(r.OptimizedCancelMs, 4),
                     improvementPercent = r.CancelImprovementPercent
                 }
             })

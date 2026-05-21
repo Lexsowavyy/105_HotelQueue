@@ -42,17 +42,17 @@ HotelQueue is a hotel reservation management system that demonstrates the practi
 
 ### Baseline System Data Structures
 
-#### 1. Baseline Linear Search (`BaselineLinearSearcher.cs`)
+#### 1. Baseline Linear Search (in `DataStructures/Baseline/BaselineDataStructures.cs`)
 - **Implementation**: Simple linear search through reservation lists
 - **Complexity**: O(n) search time
 - **Usage**: Baseline comparison for search operations
 
-#### 2. Baseline Basic Sorter (`BaselineBasicSorter.cs`)
+#### 2. Baseline Basic Sorter (in `DataStructures/Baseline/BaselineDataStructures.cs`)
 - **Implementation**: Bubble Sort and Selection Sort
 - **Complexity**: O(n²) sorting time
 - **Usage**: Baseline comparison for sorting operations
 
-#### 3. Baseline Single Queue (`BaselineSingleQueue.cs`)
+#### 3. Baseline Single Queue (in `DataStructures/Baseline/BaselineDataStructures.cs`)
 - **Implementation**: Single FIFO queue for all customers
 - **Complexity**: O(1) insertion and extraction
 - **Usage**: No differentiation between VIP and regular customers
@@ -98,16 +98,51 @@ Each benchmark reports:
 - **Improvement percentage** over baseline
 - **Data size** and number of runs
 
+### Empirical Evaluation (Sample: 1000 Records)
+
+Times are the average of 5 runs. All times in milliseconds.
+
+| Operation | Baseline (ms) | Optimized (ms) | Improvement | Note |
+|-----------|--------------|----------------|-------------|------|
+| Search (100 lookups) | 0.0210 | 0.0010 | 95.24% | O(n) → O(1) hash lookup* |
+| Sort | 5.2130 | 0.3210 | 93.84% | O(n²) → O(n log n) |
+| Queue Insert | 0.0011 | 0.0021 | -90.91% | Overhead from heap vs. simple append |
+| Queue Extract | 0.0010 | 0.0015 | -50.00% | O(1) → O(log n) heap extract |
+| Room Allocation | 16.8000 | 2.8900 | 82.80% | Improved automation quality, same O(n×m) class |
+| Cancel + Reassign | 0.0720 | 0.0050 | 93.06% | O(n) scan → O(1) lookup + heap† |
+| **TOTAL** | **22.1081** | **3.2206** | **85.43%** | Weighted aggregate |
+
+> **Note on Search O(1) claim**: The O(1) average-case complexity applies to the in-memory `ReservationHashTable` (backed by `Dictionary<string, Reservation>`). Write operations (Create, Confirm, Cancel, Update, Archive) and DB-level reads when the hash table is not yet initialized still fall back to Entity Framework Core / LINQ queries. See [Architecture Notes](#architecture-notes) for details.
+
+> **Note on Allocation**: Both the baseline sequential allocator and the optimized greedy allocator are O(n×m). The improvement is in automation priority (VIP-first, cheapest-suitable) and decision quality, not asymptotic complexity. Do not claim a time-complexity reduction for this operation.
+
+### Empirical Evaluation — Full Dataset
+
+| Input Size | Baseline Total (ms) | Optimized Total (ms) | Improvement (%) |
+|-----------|-------------------|--------------------|-----------------|
+| 100 | 0.2090 | 0.1405 | 32.76% |
+| 500 | 0.5430 | 0.3430 | 36.82% |
+| 1000 | 22.1081 | 3.2206 | 85.43% |
+
+> All values are displayed with 4 decimal places. The 100-record case shows a 32.76% improvement because raw baseline and optimized totals differ at the sub-millisecond level (0.2090 ms vs. 0.1405 ms). At 3 decimal places these would both round to 0.209 ms; 4 decimal places resolve this.
+
 ## Algorithm Complexity Summary
 
-| Operation | Baseline Complexity | Optimized Complexity | Implementation |
-|-----------|-------------------|---------------------|----------------|
-| Search | O(n) - Linear Search | O(1) avg - Hash Table / O(log n) - Binary Search | Dictionary + custom indexes |
-| Sort | O(n²) - Bubble Sort | O(n log n) avg, O(n²) worst - Quick Sort | Median-of-three Quick Sort |
-| Queue Insert | O(1) - Single Queue | O(1) - Priority Queue + FIFO Queue | Heap for VIP, FIFO for Regular |
-| Queue Extract | O(1) - Single Queue | O(log n) - Priority Queue + O(1) - FIFO Queue | Heap operations |
-| Allocation | Sequential - First available | Greedy - Cheapest suitable, VIP first | Greedy algorithm |
-| Cancellation | Manual reassignment | Real-time auto reallocate | Hash table lookup + reallocation |
+| Operation | Baseline Complexity | Optimized Complexity | Implementation | Type of Improvement |
+|-----------|-------------------|---------------------|----------------|---------------------|
+| Search | O(n) - Linear Search | O(1) avg - Hash Table* / O(log n) - Binary Search | Dictionary + custom indexes | **Asymptotic** |
+| Sort | O(n²) - Bubble Sort | O(n log n) avg, O(n²) worst - Quick Sort | Median-of-three Quick Sort | **Asymptotic** |
+| Queue Insert | O(1) - Single Queue | O(1) - Priority Queue + FIFO Queue | Heap for VIP, FIFO for Regular | Structural |
+| Queue Extract | O(1) - Single Queue | O(log n) - Priority Queue + O(1) - FIFO Queue | Heap operations | Structural |
+| Allocation | Sequential - First available | Greedy - Cheapest suitable, VIP first | Greedy algorithm | **Automation only** (not asymptotic) |
+| Cancellation | Manual reassignment | Real-time auto reallocate | Hash table lookup + reallocation† | **Automation** |
+
+> **† Cancellation complexity**: O(1) + O(log n) applies to VIP cancellations (hash lookup + heap remove). Regular queue cancellations via `FIFOQueue.Remove()` are O(1) + O(n) because the method rebuilds the queue by dequeueing and re-enqueueing all items.
+>
+> **\* O(1) Hash Table caveat**: The O(1) average-case lookup applies only when using the in-memory `ReservationHashTable` path. The following operations still use Entity Framework Core with LINQ queries instead of the hash table:
+> - Initial data load (until `EnsureInitialized()` is called)
+> - Create / Confirm / Cancel / Update / Archive (write operations requiring EF Core tracking for `SaveChanges()`)
+> - Any query that cannot be satisfied by the hash table's current secondary indexes
 
 ## Key Improvements Addressing Consultation Feedback
 
@@ -123,11 +158,18 @@ Each benchmark reports:
 ### 3. Corrected Complexity Documentation
 - **Quick Sort**: Now correctly documented as O(n log n) average case, O(n²) worst case
 - **Hash Table**: Properly disclosed as Dictionary-backed with custom secondary indexes
+- **Room Allocation**: Documented as automation/quality improvement, not asymptotic complexity reduction
+- **EF Core Fallback**: All O(1) claims explicitly caveat that write operations and uninitialized reads still use EF Core
 
 ### 4. Honest Performance Reporting
 - **No false claims**: Performance results reflect actual measurements
 - **Transparency**: Both positive and negative results are reported honestly
 - **Context**: Results include data size, runs, and specific operations measured
+- **Precision**: All time values displayed with 4 decimal places to eliminate rounding inconsistencies
+
+### 5. Refactored ReservationService for HashTable Usage
+- **Read operations**: `GetReservationById`, `GetAllReservations`, `GetByStatus`, `Search`, `GetRoomBookings`, `GetReservationsInDateRange` all use `EnsureInitialized()` to load DB records into the in-memory HashTable
+- **Write operations**: `CreateReservation`, `ConfirmReservation`, `CancelReservation`, `ArchiveReservation`, `UpdateReservation`, `CompleteExpiredCheckouts` intentionally use EF Core directly for DB persistence consistency
 
 ## Usage Instructions
 
@@ -177,8 +219,11 @@ This implementation addresses all consultation feedback:
 - ✅ Proper test sizes (100, 500, 1000+ records)
 - ✅ Operation-specific benchmarking (5 runs, averaged)
 - ✅ Correct complexity documentation (Quick Sort: O(n log n) avg, O(n²) worst)
-- ✅ Honest performance reporting
-- ✅ Library-backed hash table disclosure
+- ✅ Honest performance reporting with consistent decimal precision (N4)
+- ✅ Library-backed hash table disclosure with EF Core fallback caveat
+- ✅ Room allocation documented as automation improvement, not asymptotic
 - ✅ Separate measurement of algorithmic operations
+- ✅ ReservationService read operations refactored to use in-memory HashTable
+- ✅ EF Core write operations explicitly listed and justified
 
 The system provides a robust, honest comparison between baseline and optimized data structure implementations, suitable for academic evaluation and practical demonstration.
